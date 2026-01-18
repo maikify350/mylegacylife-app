@@ -1,26 +1,317 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
+
+/* ============================================
+   MyLegacyLife.AI - Accessibility-First Styles
+   Target Audience: Adults 50+ years old
+   ============================================ */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* MOCHA MOUSSE THEME (Primary) - Warm, inviting, storybook feel */
+  --background: 39 32 24;
+  /* #FAF7F2 - Warm cream */
+  --foreground: 217 19 27;
+  /* #1F2937 - Dark gray (high contrast) */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --primary: 25 23 18;
+  /* #6B4E3D - Mocha brown */
+  --primary-foreground: 39 32 24;
+  /* #FAF7F2 */
+
+  --secondary: 36 15 8;
+  /* #E8DFD0 - Warmer beige */
+  --secondary-foreground: 217 19 27;
+
+  --accent: 180 35 30;
+  /* #2D5F5D - Deep teal */
+  --accent-foreground: 39 32 24;
+
+  --muted: 220 14 96;
+  /* #F3F4F6 */
+  --muted-foreground: 220 9 46;
+  /* #4B5563 - Still meets 4.5:1 contrast */
+
+  --success: 123 52 30;
+  /* #2E7D32 */
+  --success-foreground: 0 0 100;
+
+  --warning: 24 95 53;
+  /* #ED6C02 */
+  --warning-foreground: 0 0 100;
+
+  --destructive: 0 84 60;
+  /* #DC2626 */
+  --destructive-foreground: 0 0 100;
+
+  --card: 0 0 100;
+  --card-foreground: 217 19 27;
+
+  --border: 220 13 91;
+  --input: 220 13 91;
+  --ring: 25 23 18;
+
+  --radius: 0.75rem;
+  /* 12px - larger for easier tapping */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* DARK THEME - Sophisticated and comfortable for low-light viewing */
+    --background: 217 19 27;
+    /* #1F2937 - Deep charcoal */
+    --foreground: 39 32 24;
+    /* #FAF7F2 - Cream text */
+
+    --primary: 30 24 41;
+    /* #C4A68A - Warm tan */
+    --primary-foreground: 217 19 27;
+
+    --secondary: 220 9 46;
+    /* #4B5563 - Medium gray */
+    --secondary-foreground: 39 32 24;
+
+    --accent: 180 35 50;
+    /* #4D9F9D - Bright teal */
+    --accent-foreground: 217 19 27;
+
+    --muted: 220 9 46;
+    --muted-foreground: 220 14 96;
+
+    --card: 220 13 18;
+    --card-foreground: 39 32 24;
+
+    --border: 220 9 46;
+    --input: 220 9 46;
   }
 }
 
+@theme inline {
+  /* Color system */
+  --color-background: oklch(var(--background));
+  --color-foreground: oklch(var(--foreground));
+  --color-primary: oklch(var(--primary));
+  --color-primary-foreground: oklch(var(--primary-foreground));
+  --color-secondary: oklch(var(--secondary));
+  --color-secondary-foreground: oklch(var(--secondary-foreground));
+  --color-accent: oklch(var(--accent));
+  --color-accent-foreground: oklch(var(--accent-foreground));
+  --color-muted: oklch(var(--muted));
+  --color-muted-foreground: oklch(var(--muted-foreground));
+  --color-success: oklch(var(--success));
+  --color-success-foreground: oklch(var(--success-foreground));
+  --color-warning: oklch(var(--warning));
+  --color-warning-foreground: oklch(var(--warning-foreground));
+  --color-destructive: oklch(var(--destructive));
+  --color-destructive-foreground: oklch(var(--destructive-foreground));
+  --color-card: oklch(var(--card));
+  --color-card-foreground: oklch(var(--card-foreground));
+  --color-border: oklch(var(--border));
+  --color-input: oklch(var(--input));
+  --color-ring: oklch(var(--ring));
+
+  /* Typography - ACCESSIBILITY: Larger base sizes for older adults */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+
+  /* Base font size: 18px (NOT 16px) for readability */
+  --font-size-base: 1.125rem;
+  /* 18px */
+  --font-size-lg: 1.25rem;
+  /* 20px */
+  --font-size-xl: 1.5rem;
+  /* 24px */
+  --font-size-2xl: 2rem;
+  /* 32px */
+  --font-size-3xl: 2.5rem;
+  /* 40px */
+  --font-size-4xl: 3rem;
+  /* 48px */
+
+  /* Line height - generous for readability */
+  --line-height-normal: 1.75;
+  --line-height-relaxed: 1.8;
+
+  /* Spacing - generous for touch targets */
+  --spacing-touch: 3rem;
+  /* 48px minimum touch target */
+  --spacing-touch-lg: 3.5rem;
+  /* 56px preferred touch target */
+
+  /* Border radius - larger for easier tapping */
+  --radius-sm: 0.375rem;
+  /* 6px */
+  --radius-md: 0.5rem;
+  /* 8px */
+  --radius-lg: 0.75rem;
+  /* 12px */
+  --radius-xl: 1rem;
+  /* 16px */
+  --radius-2xl: 1.5rem;
+  /* 24px */
+}
+
+/* ============================================
+   Base Styles - Accessibility First
+   ============================================ */
+
+* {
+  border-color: oklch(var(--border));
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: oklch(var(--background));
+  color: oklch(var(--foreground));
+  font-family: var(--font-sans);
+  /* Base font size 18px for readability */
+  font-size: 1.125rem;
+  line-height: 1.75;
+  /* Optimize text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ACCESSIBILITY: Ensure all headings are large and clear */
+h1 {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  /* 48px minimum for main headings */
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h2 {
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  /* 40px for section headings */
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h3 {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  /* 32px for subsection headings */
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* ACCESSIBILITY: Visible focus indicators */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px oklch(var(--background)), 0 0 0 4px oklch(var(--ring));
+  /* Large, visible focus ring */
+}
+
+/* ACCESSIBILITY: Ensure buttons are large enough */
+button {
+  min-height: 48px;
+  /* Minimum 48px height for touch targets */
+  touch-action: manipulation;
+  /* Prevent double-tap zoom on mobile */
+}
+
+/* ACCESSIBILITY: Ensure links are clearly identifiable */
+a {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  /* Clear underline, not just color */
+}
+
+/* ACCESSIBILITY: Ensure form inputs are large */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea {
+  min-height: 48px;
+  font-size: 1.125rem;
+  /* 18px */
+  padding: 0 1rem;
+}
+
+textarea {
+  padding: 1rem;
+}
+
+/* ACCESSIBILITY: Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ACCESSIBILITY: High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --muted-foreground: var(--foreground);
+  }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+/* Voice recording button - PRIMARY action style */
+.btn-voice-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  min-height: 6rem;
+  /* 96px */
+  font-size: 1.25rem;
+  font-weight: 600;
+  background: oklch(var(--accent));
+  color: oklch(var(--accent-foreground));
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08);
+  transition: all 0.2s;
+}
+
+.btn-voice-primary:hover {
+  background: oklch(var(--accent) / 0.9);
+}
+
+.btn-voice-primary:active {
+  transform: scale(0.98);
+}
+
+/* Skip to main content link (accessibility) */
+.skip-to-main {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: oklch(var(--accent));
+  color: oklch(var(--accent-foreground));
+  padding: 0.75rem 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  transition: top 0.2s;
+  z-index: 50;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    font-size: 12pt;
+  }
+
+  .no-print {
+    display: none !important;
+  }
 }
