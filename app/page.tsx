@@ -147,22 +147,29 @@ export default function HomePage() {
           <p className="text-xl text-muted-foreground mb-8">
             Start sharing your stories today. Your family will treasure them forever.
           </p>
-          <button className="btn-voice-primary max-w-md mx-auto">
-            <svg
-              className="w-10 h-10"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-              />
-            </svg>
-            Begin Your Story
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/demo" className="btn-voice-primary max-w-md mx-auto no-underline">
+              <svg
+                className="w-10 h-10"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                />
+              </svg>
+              Begin Your Story
+            </a>
+            <a href="/questions">
+              <button className="px-8 py-4 text-xl font-medium text-foreground border-2 border-border rounded-lg hover:bg-muted transition-colors min-h-[56px]">
+                View All Questions
+              </button>
+            </a>
+          </div>
         </div>
 
         {/* Footer */}
