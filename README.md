@@ -1,36 +1,234 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyLegacyLife.AI - Next.js Application
 
-## Getting Started
+![MyLegacyLife.AI](https://img.shields.io/badge/Next.js-16.1.3-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8)
+![Supabase](https://img.shields.io/badge/Supabase-Connected-3ecf8e)
 
-First, run the development server:
+Voice-first storytelling platform for preserving family memories. Built with accessibility-first design for adults 50+ years old.
+
+## 🎯 Features
+
+- ✅ **Voice-First Recording**: Real-time speech-to-text using Web Speech API
+- ✅ **60 Curated Questions**: Thoughtfully designed prompts across 7 life themes
+- ✅ **Accessibility-First**: WCAG AA compliant, 18px+ fonts, 48px+ touch targets
+- ✅ **Responsive Design**: Works on mobile, tablet, and desktop
+- ✅ **Supabase Integration**: PostgreSQL database with Row Level Security
+- ✅ **Beautiful UI**: Mocha Mousse theme with warm, inviting design
+
+## 🚀 Live Demo
+
+- **Homepage**: [View Demo](https://mylegacylife-app.vercel.app)
+- **Voice Recorder**: [Try Recording](https://mylegacylife-app.vercel.app/demo)
+- **Questions**: [Browse Questions](https://mylegacylife-app.vercel.app/questions)
+
+## 📦 Tech Stack
+
+- **Framework**: Next.js 16.1.3 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth (planned)
+- **Deployment**: Vercel
+- **Voice**: Web Speech API
+
+## 🛠️ Local Development
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+- Supabase account
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/maikify350/mylegacylife-app.git
+cd mylegacylife-app
+
+# Install dependencies
+npm install
+
+# Copy environment variables
+cp .env.example .env.local
+
+# Add your Supabase credentials to .env.local
+# NEXT_PUBLIC_SUPABASE_URL=your_url
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+mylegacylife-app/
+├── app/                    # Next.js App Router
+│   ├── demo/              # Voice recorder demo page
+│   ├── questions/         # Questions browse page
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Homepage
+│   └── globals.css        # Global styles (accessibility-first)
+├── components/            # React components
+│   ├── ui/               # UI component library
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── input.tsx
+│   │   └── textarea.tsx
+│   └── voice-recorder.tsx # Voice recording component
+├── lib/                   # Utilities
+│   ├── supabase/         # Supabase clients
+│   │   ├── client.ts     # Browser client
+│   │   ├── server.ts     # Server client
+│   │   └── middleware.ts # Auth middleware
+│   └── utils.ts          # Helper functions
+├── types/                 # TypeScript types
+└── public/               # Static assets
+```
 
-## Learn More
+## 🎨 Design System
 
-To learn more about Next.js, take a look at the following resources:
+### Colors (Mocha Mousse Theme)
+- **Background**: #FAF7F2 (warm cream)
+- **Primary**: #6B4E3D (mocha brown)
+- **Accent**: #2D5F5D (deep teal)
+- **Text**: #1F2937 (dark gray, high contrast)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Typography
+- **Headings**: Playfair Display (serif)
+- **Body**: Inter (sans-serif)
+- **Base Size**: 18px (not 16px - accessibility!)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Accessibility
+- ✅ WCAG AA compliant
+- ✅ Minimum 4.5:1 contrast ratio
+- ✅ 48px minimum touch targets
+- ✅ Keyboard navigation
+- ✅ Screen reader friendly
 
-## Deploy on Vercel
+## 🗄️ Database Schema
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Key tables:
+- `questions` - Master question catalog (60 questions)
+- `answers` - User story answers
+- `subscriber_profiles` - User profiles
+- `artifacts` - Photos, voice recordings
+- `ancestry_trees` - Family trees (3 generations)
+- `ancestry_members` - Family members
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `db/` folder for full schema.
+
+## 🔐 Environment Variables
+
+Required:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
+
+Optional (for future features):
+```bash
+OPENAI_API_KEY=your_openai_key
+STRIPE_SECRET_KEY=your_stripe_key
+GOOGLE_GEOCODING_API_KEY=your_google_key
+```
+
+## 📱 Browser Support
+
+Voice recording works on:
+- ✅ Chrome (Desktop & Android)
+- ✅ Safari (Mac, iPhone, iPad)
+- ✅ Microsoft Edge
+- ❌ Firefox (limited support)
+
+## 🚢 Deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed Vercel deployment instructions.
+
+Quick deploy:
+```bash
+# Push to GitHub
+git push origin main
+
+# Vercel will auto-deploy
+# Add environment variables in Vercel dashboard
+```
+
+## 🧪 Testing
+
+```bash
+# Run type checking
+npm run type-check
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+## 📝 Git Commits
+
+We follow conventional commits:
+- `feat:` New features
+- `fix:` Bug fixes
+- `docs:` Documentation
+- `style:` Formatting
+- `refactor:` Code restructuring
+- `test:` Tests
+- `chore:` Maintenance
+- `a11y:` Accessibility improvements
+
+## 🗺️ Roadmap
+
+### ✅ Phase 1 - MVP (Complete)
+- [x] Project setup
+- [x] Database schema
+- [x] Voice recorder component
+- [x] Questions page
+- [x] Homepage
+- [x] UI component library
+
+### 🚧 Phase 2 - Core Features (In Progress)
+- [ ] Authentication (magic links)
+- [ ] User dashboard
+- [ ] Answer submission flow
+- [ ] Photo upload
+- [ ] AI writing assistance
+
+### 📋 Phase 3 - Advanced Features
+- [ ] Family tree builder
+- [ ] Book preview
+- [ ] Sharing & permissions
+- [ ] Book ordering
+- [ ] Stripe billing
+
+## 🤝 Contributing
+
+This is a private project. For questions or suggestions, contact the development team.
+
+## 📄 License
+
+Proprietary - All rights reserved
+
+## 👥 Team
+
+- **Developer**: Antigravity AI
+- **Product Owner**: maikify350
+- **Database**: Supabase (zuklmhukxmycheahxmcr)
+
+## 📞 Support
+
+For issues or questions:
+- Check [DEPLOYMENT.md](./DEPLOYMENT.md) for deployment help
+- Review [docs/History.md](../docs/History.md) for project timeline
+- Check [docs/FAQs.md](../docs/FAQs.md) for common questions
+
+---
+
+**Built with ❤️ for preserving family memories**
