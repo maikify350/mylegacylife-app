@@ -30,7 +30,7 @@ export default function HomePage() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12">
-          <button className="btn-voice-primary">
+          <a href="/demo" className="btn-voice-primary no-underline">
             <svg
               className="w-12 h-12"
               fill="none"
@@ -44,12 +44,12 @@ export default function HomePage() {
                 d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
               />
             </svg>
-            Start Your Story
-          </button>
+            Try Voice Recording Demo
+          </a>
 
           <a
             href="#learn-more"
-            className="px-8 py-4 text-xl font-medium text-foreground border-2 border-border rounded-lg hover:bg-muted transition-colors min-h-[56px] flex items-center"
+            className="px-8 py-4 text-xl font-medium text-foreground border-2 border-border rounded-lg hover:bg-muted transition-colors min-h-[56px] flex items-center no-underline"
           >
             Learn More
           </a>
