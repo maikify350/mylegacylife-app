@@ -30,7 +30,7 @@ export default function HomePage() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12">
-          <a href="/demo" className="btn-voice-primary no-underline">
+          <a href="/answer" className="btn-voice-primary no-underline">
             <svg
               className="w-12 h-12"
               fill="none"
@@ -44,7 +44,7 @@ export default function HomePage() {
                 d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
               />
             </svg>
-            Try Voice Recording Demo
+            Start Recording Your Story
           </a>
 
           <a
