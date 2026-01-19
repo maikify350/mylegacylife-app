@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
+import { RichTextEditor } from "@/components/rich-text-editor"
 import { cn } from "@/lib/utils"
 
 interface VoiceRecorderProps {
@@ -166,20 +166,16 @@ export function VoiceRecorder({
             </CardHeader>
 
             <CardContent className="space-y-6">
-                {/* Primary Textarea */}
+                {/* Primary Rich Text Editor */}
                 <div className="space-y-0" style={{ marginBottom: '0' }}>
 
-
-                    <Textarea
-                        value={transcript}
-                        onChange={(e) => {
-                            setTranscript(e.target.value)
-                            onTranscriptChange?.(e.target.value)
+                    <RichTextEditor
+                        content={transcript}
+                        onUpdate={(content) => {
+                            setTranscript(content)
+                            onTranscriptChange?.(content)
                         }}
                         placeholder="Click here and start typing... or use voice dictation (Win+H on Windows, Fn+Fn on Mac)"
-                        className="text-lg leading-relaxed"
-                        style={{ minHeight: '260px', paddingTop: '2px', paddingBottom: '2px' }}
-                        autoFocus
                     />
 
                     <div className="flex items-start gap-2 p-4 bg-info/10 rounded-lg border border-info/20" style={{ paddingTop: '0', paddingBottom: '0' }}>
