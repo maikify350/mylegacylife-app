@@ -340,7 +340,7 @@ export function DevHealthIndicator() {
                         logger.clearLogs()
                     }}
                     className="px-2 py-1 text-xs bg-white/10 hover:bg-white/20 rounded transition-colors"
-                    disabled={errorLog.length === 0 && logger.getLogs().length === 0}
+                    disabled={logCount === 0}
                 >
                     Clear
                 </button>
