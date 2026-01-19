@@ -10,7 +10,6 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
     const [data, setData] = useState<TablesResponse | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
     const [position, setPosition] = useState({ x: 100, y: 100 }) // Default position
     const [isDragging, setIsDragging] = useState(false)
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
@@ -31,7 +30,6 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
 
             const result: TablesResponse = await response.json()
             setData(result)
-            setLastRefresh(new Date())
 
             logger.notice('UI', 'Table statistics loaded', {
                 tableCount: result.totalTables,
@@ -111,27 +109,8 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
         }
     }, [open])
 
-    // Auto-refresh every 3 seconds when open
-    useEffect(() => {
-        if (!open) return
-
-        const interval = setInterval(() => {
-            fetchTables()
-        }, 3000)
-
-        return () => clearInterval(interval)
-    }, [open])
-
     const handleRefresh = () => {
         fetchTables()
-    }
-
-    const getTimeSinceRefresh = () => {
-        if (!lastRefresh) return 'Never'
-        const seconds = Math.floor((Date.now() - lastRefresh.getTime()) / 1000)
-        if (seconds < 5) return 'Just now'
-        if (seconds < 60) return `${seconds}s ago`
-        return `${Math.floor(seconds / 60)}m ago`
     }
 
     return (
@@ -195,14 +174,12 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                                     )}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-gray-500 text-xs">
-                                        🔄 {getTimeSinceRefresh()}
-                                    </span>
                                     <button
                                         onClick={handleRefresh}
                                         disabled={isLoading}
-                                        className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
                                     >
+                                        {isLoading && <span className="animate-spin">⟳</span>}
                                         {isLoading ? 'Refreshing...' : 'Refresh'}
                                     </button>
                                 </div>
