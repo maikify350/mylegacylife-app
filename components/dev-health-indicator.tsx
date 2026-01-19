@@ -8,10 +8,50 @@ export function DevHealthIndicator() {
     const [languageToolStatus, setLanguageToolStatus] = useState<'healthy' | 'error' | 'checking'>('checking')
     const [errorLog, setErrorLog] = useState<Array<{ time: string; service: string; message: string }>>([])
     const [showLog, setShowLog] = useState(false)
+    const [gitStatus, setGitStatus] = useState<string>('')
+    const [committing, setCommitting] = useState(false)
 
     const addToLog = (service: string, message: string) => {
         const time = new Date().toLocaleTimeString()
         setErrorLog(prev => [...prev, { time, service, message }].slice(-20)) // Keep last 20 entries
+    }
+
+    const checkGitStatus = async () => {
+        try {
+            const response = await fetch('/api/dev-git', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'status' })
+            })
+            const data = await response.json()
+            if (data.success) {
+                setGitStatus(data.status)
+            }
+        } catch (err) {
+            console.error('Failed to check git status:', err)
+        }
+    }
+
+    const handleGitCommit = async () => {
+        setCommitting(true)
+        try {
+            const response = await fetch('/api/dev-git', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'commit' })
+            })
+            const data = await response.json()
+            if (data.success) {
+                addToLog('Git', 'Committed successfully')
+                await checkGitStatus()
+            } else {
+                addToLog('Git', data.error || 'Commit failed')
+            }
+        } catch (err) {
+            addToLog('Git', err instanceof Error ? err.message : 'Commit failed')
+        } finally {
+            setCommitting(false)
+        }
     }
 
     useEffect(() => {
@@ -53,7 +93,9 @@ export function DevHealthIndicator() {
             }
         }
 
+
         checkHealth()
+        checkGitStatus()
         const interval = setInterval(checkHealth, 30000) // Check every 30 seconds
 
         return () => clearInterval(interval)
@@ -135,6 +177,21 @@ export function DevHealthIndicator() {
                     Clear
                 </button>
             </div>
+
+            {/* Git Commit Button */}
+            <button
+                onClick={handleGitCommit}
+                disabled={committing || gitStatus === 'Working tree clean'}
+                className="w-full px-2 py-1 text-xs bg-green-600/20 hover:bg-green-600/30 disabled:bg-gray-600/20 disabled:cursor-not-allowed rounded transition-colors"
+                title={gitStatus}
+            >
+                {committing ? 'Committing...' : '💾 Git Commit'}
+            </button>
+            {gitStatus && gitStatus !== 'Working tree clean' && (
+                <div className="text-xs text-yellow-400 truncate" title={gitStatus}>
+                    {gitStatus.split('\n').length} file(s) changed
+                </div>
+            )}
 
             {/* Error Log Display */}
             {showLog && errorLog.length > 0 && (
