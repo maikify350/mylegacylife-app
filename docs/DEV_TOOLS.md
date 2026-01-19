@@ -75,30 +75,42 @@ A draggable dialog for inspecting database tables and record counts.
   - Error handling for missing tables
   
 - **Compact Design**
-  - Tight spacing (1-2px gaps)
+  - Tight spacing (1-2px gaps between rows)
   - Minimal padding (4px dialog, 2px content)
   - Small fonts (text-xs, text-sm)
   - Maximum real estate utilization
+  - No footer (× button only for closing)
   
 - **Windows-Style UI**
   - Solid blue header (bg-blue-600)
-  - 30px header height
+  - 30px header height (compact)
   - White text on blue background
-  - Standard close button (×)
+  - Standard close button (×) in header
+  - Pill-shaped Refresh button
   
-- **Draggable**
-  - Grab header to drag
+- **Draggable & Persistent**
+  - Grab header to drag anywhere on screen
   - Position persists in localStorage
-  - Independent from dev panel (decoupled drag)
+  - Independent from dev panel (decoupled drag events)
+  - Stays open when clicking outside (no accidental closure)
+  - Only × button closes the dialog
   
 - **Manual Refresh Only**
   - Fetches on dialog open
-  - Manual refresh button with spinner
+  - Pill-shaped Refresh button with spinner (⟳)
   - No auto-refresh (performance first)
+  - Compact button with minimal padding
+
+#### Closing Behavior:
+- **Only × button closes** - No accidental closure
+- Clicking backdrop → Dialog stays open
+- Clicking dev panel → Both panels stay open
+- Clicking anywhere else → Dialog stays open
+- **Explicit control** - Must click × to close
 
 #### Z-Index Layering:
-- **Backdrop**: 9999 (above dev panel)
-- **Dialog**: 10000 (above backdrop)
+- **Backdrop**: 9999 (above dev panel, non-interactive)
+- **Dialog**: 10000 (above backdrop and dev panel)
 
 #### Tracked Tables:
 ```typescript
@@ -296,10 +308,14 @@ mylegacylife-app/
 4. Logs auto-scroll to latest entries
 
 #### Checking Database:
-1. Click "🗄️ Tables" button
-2. View table counts by category
-3. Click "Refresh" to update counts
-4. Drag dialog to preferred position
+1. Click "🗄️ Tables (142)" button in dev panel
+2. Table explorer dialog opens above dev panel
+3. View table counts by category (Core, Community, System, Audit)
+4. Click pill-shaped "Refresh" button to update counts (shows spinner)
+5. Drag dialog by header to preferred position
+6. **Dialog stays open** when clicking outside or on dev panel
+7. Click **× button** in header to close (only way to close)
+8. Position is remembered for next time
 
 #### Git Operations:
 1. View changed file count in panel
@@ -343,7 +359,13 @@ When adding new features, integrate logging:
 - Check API endpoint is accessible
 - Verify tables exist in database
 - Check browser console for errors
-- Click "Refresh" to retry
+- Click "Refresh" button to retry
+
+### Table Explorer Closes Unexpectedly:
+- **Fixed**: Dialog only closes when clicking × button
+- Clicking outside, on backdrop, or on dev panel will NOT close it
+- This allows both panels to coexist and be used simultaneously
+- To close: Click the × button in the blue header
 
 ### Performance Issues:
 - Disable log view when not needed (F12)
@@ -447,5 +469,6 @@ The MyLegacyLife dev tools provide a **powerful, performance-first development e
 ---
 
 *Last Updated: 2026-01-19*  
-*Version: 1.0*  
+*Version: 1.1*  
 *Maintained by: Development Team*
+
