@@ -1,3 +1,5 @@
+import { Logo } from "@/components/logo";
+
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8">
@@ -5,12 +7,7 @@ export default function HomePage() {
       <div className="max-w-4xl mx-auto text-center space-y-8">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <div className="relative w-48 h-48">
-            {/* Placeholder for logo - we'll add the actual SVG */}
-            <div className="w-full h-full rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <div className="text-6xl">📖</div>
-            </div>
-          </div>
+          <Logo className="w-48 h-48" />
         </div>
 
         {/* Heading */}
