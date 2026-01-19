@@ -259,7 +259,7 @@ export function DevHealthIndicator() {
         <div
             ref={panelRef}
             onMouseDown={handleMouseDown}
-            className="fixed z-50 flex flex-col gap-1 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono select-none"
+            className="fixed z-[9999] flex flex-col gap-1 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono select-none"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
