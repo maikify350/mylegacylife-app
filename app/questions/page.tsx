@@ -92,13 +92,16 @@ export default async function QuestionsPage() {
                                         <div
                                             key={question.id}
                                             className="rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border-2 border-transparent hover:border-accent"
-                                            style={{ padding: '4px' }}
+                                            style={{
+                                                padding: '4px',
+                                                margin: '0',
+                                            }}
                                         >
                                             <div className="flex gap-4 items-start">
                                                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-lg font-bold">
                                                     {category.start + index + 1}
                                                 </div>
-                                                <p className="text-xl flex-1" style={{ lineHeight: 1.2 }}>
+                                                <p className="text-xl flex-1" style={{ lineHeight: '1.2', margin: '0', padding: '0' }}>
                                                     {question.question_text}
                                                 </p>
                                             </div>
