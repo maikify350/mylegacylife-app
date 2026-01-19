@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client"
 import { VoiceRecorder } from "@/components/voice-recorder"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -19,6 +20,7 @@ export default function AnswerPage() {
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [saved, setSaved] = useState(false)
+    const [showSkipDialog, setShowSkipDialog] = useState(false)
     const router = useRouter()
     const supabase = createClient()
 
@@ -89,10 +91,13 @@ export default function AnswerPage() {
     }
 
     const handleSkip = () => {
-        if (confirm('Skip this question and get a new one?')) {
-            setTranscript("")
-            loadRandomQuestion()
-        }
+        setShowSkipDialog(true)
+    }
+
+    const confirmSkip = () => {
+        setTranscript("")
+        loadRandomQuestion()
+        setShowSkipDialog(false)
     }
 
     if (loading) {
@@ -233,6 +238,24 @@ export default function AnswerPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Skip Question Confirmation Dialog */}
+            <AlertDialog open={showSkipDialog} onOpenChange={setShowSkipDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Skip this question?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            You'll get a new random question. You can always come back to this one later.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmSkip} className="bg-[#4A3728] hover:bg-[#5A4738]">
+                            Skip Question
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }
