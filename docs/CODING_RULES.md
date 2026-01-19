@@ -85,6 +85,60 @@ updated_by uuid null
 - Test on: Mobile (375px), Tablet (768px), Desktop (1440px)
 - Use Tailwind responsive prefixes: `sm:`, `md:`, `lg:`, `xl:`
 
+### Rule 6: Form Input Autocomplete (MANDATORY)
+**Always add autocomplete attributes to form inputs for better UX:**
+
+```tsx
+// Email input
+<Input
+  id="user-email"
+  name="email"
+  type="email"
+  autoComplete="email"
+  placeholder="your@email.com"
+/>
+
+// Phone input
+<Input
+  id="user-phone"
+  name="tel"
+  type="tel"
+  autoComplete="tel"
+  placeholder="(555) 123-4567"
+/>
+
+// Name input
+<Input
+  id="user-name"
+  name="name"
+  type="text"
+  autoComplete="name"
+  placeholder="John Doe"
+/>
+```
+
+**Why?**
+- Enables browser autofill from history
+- Improves user experience (fewer keystrokes)
+- Standard web practice
+- Helps password managers work correctly
+
+**Common autocomplete values:**
+- `email` - Email address
+- `tel` - Phone number
+- `name` - Full name
+- `given-name` - First name
+- `family-name` - Last name
+- `street-address` - Street address
+- `postal-code` - ZIP/postal code
+- `cc-number` - Credit card number
+- `cc-exp` - Credit card expiration
+
+**Always include:**
+- `id` attribute (for label association)
+- `name` attribute (for form submission)
+- `autoComplete` attribute (for browser autofill)
+
 ## Code Quality
 
 ### Rule 6: TypeScript Strict Mode
