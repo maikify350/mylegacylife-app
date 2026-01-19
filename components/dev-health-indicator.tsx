@@ -26,6 +26,10 @@ export function DevHealthIndicator() {
     const [logCount, setLogCount] = useState(0) // Client-side log count to avoid hydration mismatch
     const [showTables, setShowTables] = useState(false) // Table explorer dialog
     const [tableCount, setTableCount] = useState(0) // Total table records count
+    const [showStats, setShowStats] = useState(false) // Stats section toggle
+    const [sessionStart] = useState(Date.now()) // Session start time
+    const [apiCallCount, setApiCallCount] = useState(0) // API call counter
+    const [errorCount, setErrorCount] = useState(0) // Error counter
 
     // Load position from localStorage on mount
     useEffect(() => {
@@ -154,13 +158,29 @@ export function DevHealthIndicator() {
 
     const fetchTableCount = async () => {
         try {
+            setApiCallCount(prev => prev + 1) // Track API call
             const response = await fetch('/api/admin/tables')
             if (response.ok) {
                 const data = await response.json()
                 setTableCount(data.totalRecords || 0)
             }
         } catch (error) {
-            // Silently fail
+            setErrorCount(prev => prev + 1) // Track error
+        }
+    }
+
+    const getSessionDuration = () => {
+        const ms = Date.now() - sessionStart
+        const seconds = Math.floor(ms / 1000)
+        const minutes = Math.floor(seconds / 60)
+        const hours = Math.floor(minutes / 60)
+
+        if (hours > 0) {
+            return `${hours}h ${minutes % 60}m`
+        } else if (minutes > 0) {
+            return `${minutes}m ${seconds % 60}s`
+        } else {
+            return `${seconds}s`
         }
     }
 
@@ -259,6 +279,18 @@ export function DevHealthIndicator() {
         }
     }, [])
 
+    // Update stats display when visible
+    useEffect(() => {
+        if (!showStats) return
+
+        const statsInterval = setInterval(() => {
+            // Force re-render to update session duration
+            setLogRefreshTrigger(prev => prev + 1)
+        }, 1000) // Update every second
+
+        return () => clearInterval(statsInterval)
+    }, [showStats])
+
     // Auto-scroll to bottom when logs update (tail -f behavior)
     useEffect(() => {
         if (showLog && logEndRef.current) {
@@ -301,6 +333,38 @@ export function DevHealthIndicator() {
                 </button>
                 <span className="text-gray-400 ml-auto text-[10px]">F10: Toggle | F12: Log</span>
             </div>
+
+            <div className="h-px bg-white/30 my-0.5" />
+
+            {/* Stats Section */}
+            <button
+                onClick={() => setShowStats(!showStats)}
+                className="w-full flex items-center justify-between px-2 py-1 hover:bg-white/10 rounded transition-colors text-left"
+            >
+                <span className="text-xs font-semibold">📊 Stats</span>
+                <span className="text-xs">{showStats ? '▼' : '▶'}</span>
+            </button>
+
+            {showStats && (
+                <div className="px-2 py-1 space-y-0.5 text-xs bg-black/30 rounded">
+                    <div className="flex items-center justify-between">
+                        <span className="text-gray-400">⏱️ Session:</span>
+                        <span className="font-mono">{getSessionDuration()}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-gray-400">📊 Logs:</span>
+                        <span className="font-mono">{logCount}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-gray-400">🔄 API Calls:</span>
+                        <span className="font-mono">{apiCallCount}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-gray-400">🐛 Errors:</span>
+                        <span className={`font-mono ${errorCount > 0 ? 'text-red-400' : ''}`}>{errorCount}</span>
+                    </div>
+                </div>
+            )}
 
             <div className="h-px bg-white/30 my-0.5" />
 
