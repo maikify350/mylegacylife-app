@@ -16,6 +16,8 @@ export function DevHealthIndicator() {
     const [isDragging, setIsDragging] = useState(false)
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
     const panelRef = useRef<HTMLDivElement>(null)
+    const logEndRef = useRef<HTMLDivElement>(null)
+    const [logRefreshTrigger, setLogRefreshTrigger] = useState(0)
 
     // Load position from localStorage on mount
     useEffect(() => {
@@ -183,8 +185,23 @@ export function DevHealthIndicator() {
         checkGitStatus()
         const interval = setInterval(checkHealth, 30000) // Check every 30 seconds
 
-        return () => clearInterval(interval)
+        // Real-time log refresh (tail -f behavior)
+        const logRefreshInterval = setInterval(() => {
+            setLogRefreshTrigger(prev => prev + 1)
+        }, 500) // Refresh logs every 500ms
+
+        return () => {
+            clearInterval(interval)
+            clearInterval(logRefreshInterval)
+        }
     }, [])
+
+    // Auto-scroll to bottom when logs update (tail -f behavior)
+    useEffect(() => {
+        if (showLog && logEndRef.current) {
+            logEndRef.current.scrollIntoView({ behavior: 'smooth' })
+        }
+    }, [logRefreshTrigger, showLog])
 
     // Don't render in production
     if (process.env.NODE_ENV !== 'development') return null
@@ -335,6 +352,8 @@ export function DevHealthIndicator() {
                                 <div className={entry.source === 'API Error' ? 'text-red-300' : 'text-blue-300'}>{entry.message}</div>
                             </div>
                         ))}
+                        {/* Auto-scroll anchor */}
+                        <div ref={logEndRef} />
                     </div>
                 ) : (
                     <div className="mt-1 text-xs text-gray-400 text-center py-2">
