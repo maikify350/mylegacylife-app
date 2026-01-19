@@ -178,18 +178,16 @@ INSERT INTO public.question_categories (name, description, icon, color, order_in
 -- RESTORE QUESTIONS DATA
 -- ============================================
 -- Only restore if backup table exists and has data
+-- Use minimal columns that are guaranteed to exist
 DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM pg_tables WHERE tablename = 'questions_backup') THEN
-        -- Insert with only columns that exist in both tables
-        INSERT INTO public.questions (id, question_text, order_index, is_active, created_at, updated_at)
+        INSERT INTO public.questions (id, question_text, created_at, updated_at)
         SELECT 
             COALESCE(id, gen_random_uuid()),
             question_text,
-            COALESCE(order_index, 0),
-            COALESCE(is_active, true),
-            COALESCE(created_at, NOW()),
-            COALESCE(updated_at, NOW())
+            NOW(),
+            NOW()
         FROM questions_backup;
     END IF;
 END $$;
