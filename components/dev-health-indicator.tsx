@@ -292,6 +292,28 @@ export function DevHealthIndicator() {
                 </button>
             </div>
 
+            {/* Test Log Generator */}
+            <button
+                onClick={() => {
+                    // Generate 10 test log entries with delay
+                    let count = 0
+                    const interval = setInterval(() => {
+                        count++
+                        logger.info('Test', `Test log entry #${count}`, { timestamp: Date.now() })
+                        logger.crud('CREATE', 'test_table', { id: count })
+                        logger.api('/api/test', 'POST', 200)
+
+                        if (count >= 10) {
+                            clearInterval(interval)
+                            logger.notice('Test', 'Test log generation complete')
+                        }
+                    }, 300) // 300ms between entries
+                }}
+                className="w-full px-2 py-1 text-xs bg-purple-600/20 hover:bg-purple-600/30 rounded transition-colors"
+            >
+                🧪 Generate Test Logs
+            </button>
+
             {/* Git Commit Button */}
             <button
                 onClick={handleGitCommit}
