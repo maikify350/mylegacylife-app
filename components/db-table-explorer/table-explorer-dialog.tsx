@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { TableExplorerDialogProps, TablesResponse } from './types'
 import { TableListView } from './table-list-view'
@@ -11,6 +11,10 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+    const [position, setPosition] = useState({ x: 100, y: 100 }) // Default position
+    const [isDragging, setIsDragging] = useState(false)
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+    const dialogRef = useRef<HTMLDivElement>(null)
 
     const fetchTables = async () => {
         setIsLoading(true)
@@ -41,6 +45,61 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
             setIsLoading(false)
         }
     }
+
+    // Load position from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem('tableExplorerPosition')
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved)
+                setPosition(parsed)
+            } catch (e) {
+                // Use default position
+            }
+        }
+    }, [])
+
+    // Save position to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('tableExplorerPosition', JSON.stringify(position))
+    }, [position])
+
+    // Drag handlers
+    const handleMouseDown = (e: React.MouseEvent) => {
+        // Only start drag if clicking on header area
+        if ((e.target as HTMLElement).closest('[data-drag-handle]')) {
+            setIsDragging(true)
+            setDragOffset({
+                x: e.clientX - position.x,
+                y: e.clientY - position.y
+            })
+        }
+    }
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (isDragging) {
+                setPosition({
+                    x: e.clientX - dragOffset.x,
+                    y: e.clientY - dragOffset.y
+                })
+            }
+        }
+
+        const handleMouseUp = () => {
+            setIsDragging(false)
+        }
+
+        if (isDragging) {
+            document.addEventListener('mousemove', handleMouseMove)
+            document.addEventListener('mouseup', handleMouseUp)
+        }
+
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove)
+            document.removeEventListener('mouseup', handleMouseUp)
+        }
+    }, [isDragging, dragOffset])
 
     // Fetch on open
     useEffect(() => {
@@ -73,73 +132,107 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
     }
 
     return (
-        <AlertDialog open={open} onOpenChange={onClose}>
-            <AlertDialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-1">
-                <AlertDialogHeader className="px-2 pt-2 pb-1">
-                    <AlertDialogTitle className="flex items-center gap-2 text-xl">
-                        <span>🗄️</span>
-                        <span>Database Table Explorer</span>
-                    </AlertDialogTitle>
-                </AlertDialogHeader>
+        <>
+            {open && (
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className="fixed inset-0 bg-black/20 z-[9999]"
+                        onClick={onClose}
+                    />
 
-                {/* Summary Stats */}
-                <div className="px-2 pb-1 space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1">
-                                <span className="font-semibold">📊 Database:</span>
-                                <span className="text-gray-600">mylegacylife</span>
+                    {/* Dialog */}
+                    <div
+                        ref={dialogRef}
+                        onMouseDown={handleMouseDown}
+                        className="fixed z-[10000] bg-white rounded-lg shadow-2xl border border-gray-300 flex flex-col p-1"
+                        style={{
+                            left: `${position.x}px`,
+                            top: `${position.y}px`,
+                            width: '800px',
+                            maxHeight: '90vh',
+                            cursor: isDragging ? 'grabbing' : 'default'
+                        }}
+                    >
+                        {/* Draggable Header */}
+                        <div
+                            data-drag-handle
+                            className="px-2 pt-2 pb-1 cursor-grab active:cursor-grabbing select-none bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t"
+                        >
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-xl font-semibold">
+                                    <span>🗄️</span>
+                                    <span>Database Table Explorer</span>
+                                </div>
+                                <button
+                                    onClick={onClose}
+                                    className="text-gray-500 hover:text-gray-700 text-xl leading-none"
+                                >
+                                    ×
+                                </button>
                             </div>
-                            {data && (
-                                <>
+                        </div>
+
+                        {/* Summary Stats */}
+                        <div className="px-2 pb-1 space-y-1">
+                            <div className="flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1">
-                                        <span className="font-semibold">📈 Total:</span>
-                                        <span className="text-gray-600">
-                                            {data.totalTables} tables, {data.totalRecords.toLocaleString()} records
-                                        </span>
+                                        <span className="font-semibold">📊 Database:</span>
+                                        <span className="text-gray-600">mylegacylife</span>
                                     </div>
-                                </>
+                                    {data && (
+                                        <>
+                                            <div className="flex items-center gap-1">
+                                                <span className="font-semibold">📈 Total:</span>
+                                                <span className="text-gray-600">
+                                                    {data.totalTables} tables, {data.totalRecords.toLocaleString()} records
+                                                </span>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-gray-500 text-xs">
+                                        🔄 {getTimeSinceRefresh()}
+                                    </span>
+                                    <button
+                                        onClick={handleRefresh}
+                                        disabled={isLoading}
+                                        className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        {isLoading ? 'Refreshing...' : 'Refresh'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {error && (
+                                <div className="bg-red-50 border border-red-200 rounded p-2 text-xs text-red-700">
+                                    <span className="font-semibold">Error:</span> {error}
+                                </div>
                             )}
                         </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-gray-500 text-xs">
-                                🔄 {getTimeSinceRefresh()}
-                            </span>
+
+                        {/* Table List */}
+                        <div className="flex-1 overflow-hidden">
+                            <TableListView
+                                tables={data?.tables || []}
+                                isLoading={isLoading && !data}
+                            />
+                        </div>
+
+                        {/* Footer */}
+                        <div className="px-2 py-1 border-t flex justify-end">
                             <button
-                                onClick={handleRefresh}
-                                disabled={isLoading}
-                                className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                onClick={onClose}
+                                className="px-3 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded transition-colors"
                             >
-                                {isLoading ? 'Refreshing...' : 'Refresh'}
+                                Close
                             </button>
                         </div>
                     </div>
-
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 rounded p-2 text-xs text-red-700">
-                            <span className="font-semibold">Error:</span> {error}
-                        </div>
-                    )}
-                </div>
-
-                {/* Table List */}
-                <div className="flex-1 overflow-hidden">
-                    <TableListView
-                        tables={data?.tables || []}
-                        isLoading={isLoading && !data}
-                    />
-                </div>
-
-                {/* Footer */}
-                <div className="px-2 py-1 border-t flex justify-end">
-                    <button
-                        onClick={onClose}
-                        className="px-3 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded transition-colors"
-                    >
-                        Close
-                    </button>
-                </div>
-            </AlertDialogContent>
-        </AlertDialog>
+                </>
+            )}
+        </>
     )
 }
