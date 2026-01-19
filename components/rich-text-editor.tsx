@@ -349,9 +349,20 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
             {/* Editor Content */}
             <EditorContent editor={editor} />
 
-            {/* Character and Word Counter */}
+            {/* Character and Word Counter with Reading Time */}
             <div className="text-xs text-muted-foreground mt-1 px-2">
-                {editor?.storage.characterCount?.characters() || 0} characters · {editor?.storage.characterCount?.words() || 0} words
+                {(() => {
+                    const chars = editor?.storage.characterCount?.characters() || 0
+                    const words = editor?.storage.characterCount?.words() || 0
+                    const readingTimeMinutes = Math.ceil(words / 200) // 200 words per minute average
+                    const readingTime = readingTimeMinutes === 0
+                        ? '< 1 min'
+                        : readingTimeMinutes === 1
+                            ? '1 min'
+                            : `${readingTimeMinutes} mins`
+
+                    return `${chars} characters · ${words} words · ${readingTime} read`
+                })()}
             </div>
 
             {/* Image Editor Dialog */}
