@@ -124,7 +124,7 @@ export function DevHealthIndicator() {
             if (!isResizing) return
 
             const deltaY = e.clientY - resizeStartY
-            const newHeight = Math.max(200, Math.min(800, resizeStartHeight + deltaY))
+            const newHeight = Math.max(350, Math.min(800, resizeStartHeight + deltaY)) // Min 350px to show all buttons
             setHeight(newHeight)
         }
 
