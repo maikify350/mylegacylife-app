@@ -9,47 +9,37 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                background: "hsl(var(--background))",
-                foreground: "hsl(var(--foreground))",
-                primary: {
-                    DEFAULT: "hsl(var(--primary))",
-                    foreground: "hsl(var(--primary-foreground))",
-                },
-                secondary: {
-                    DEFAULT: "hsl(var(--secondary))",
-                    foreground: "hsl(var(--secondary-foreground))",
-                },
-                accent: {
-                    DEFAULT: "hsl(var(--accent))",
-                    foreground: "hsl(var(--accent-foreground))",
-                },
-                muted: {
-                    DEFAULT: "hsl(var(--muted))",
-                    foreground: "hsl(var(--muted-foreground))",
-                },
-                success: {
-                    DEFAULT: "hsl(var(--success))",
-                    foreground: "hsl(var(--success-foreground))",
-                },
-                warning: {
-                    DEFAULT: "hsl(var(--warning))",
-                    foreground: "hsl(var(--warning-foreground))",
-                },
-                destructive: {
-                    DEFAULT: "hsl(var(--destructive))",
-                    foreground: "hsl(var(--destructive-foreground))",
+                // Core Colors
+                background: {
+                    DEFAULT: "#1C1410",
+                    light: "#2A1F1A",
                 },
                 card: {
-                    DEFAULT: "hsl(var(--card))",
-                    foreground: "hsl(var(--card-foreground))",
+                    DEFAULT: "#3D2E25",
+                    hover: "#4A3830",
                 },
-                border: "hsl(var(--border))",
-                input: "hsl(var(--input))",
-                ring: "hsl(var(--ring))",
+                // Accent Colors
+                accent: {
+                    DEFAULT: "#C4956A",
+                    light: "#D4A574",
+                },
+                // Text Colors
+                foreground: "#F5E6D3", // Cream
+                "text-muted": "#A89080",
+                "warm-gray": "#8B7355",
+                // Semantic Colors
+                success: "#7DB36E",
+                danger: "#C97B6B",
+                info: "#6A9EC4",
+                // Derived
+                primary: "#C4956A",
+                border: "#4A3830",
+                input: "#3D2E25",
+                ring: "#C4956A",
             },
             fontFamily: {
-                sans: ["var(--font-sans)"],
-                serif: ["var(--font-serif)"],
+                sans: ["Inter", "system-ui", "sans-serif"],
+                serif: ["Playfair Display", "Georgia", "serif"],
             },
             fontSize: {
                 base: "1.125rem", // 18px
@@ -60,9 +50,7 @@ const config: Config = {
                 "4xl": "3rem", // 48px
             },
             borderRadius: {
-                lg: "var(--radius)",
-                md: "calc(var(--radius) - 2px)",
-                sm: "calc(var(--radius) - 4px)",
+                DEFAULT: "0.75rem",
             },
         },
     },

@@ -1,35 +1,143 @@
 @import "tailwindcss";
 
-/* Mocha Mousse Theme Variables */
+/* ============================================
+   MyLegacyLife.AI - Mocha Mousse Theme
+   Pantone 2025 Color of the Year
+   Accessibility-First Design for Adults 50+
+   ============================================ */
+
 :root {
-  --background: #FAF7F2;
-  --foreground: #1F2937;
-  --primary: #6B4E3D;
-  --primary-foreground: #FAF7F2;
-  --accent: #2D5F5D;
+  /* Mocha Theme (Default - Light) */
+  --primary: #A47764;
+  /* Mocha Mousse */
+  --background: #FDF8F5;
+  /* Warm cream */
+  --foreground: #4A3728;
+  /* Deep brown */
+  --card: #FFFFFF;
+  /* White */
+  --card-foreground: #4A3728;
+
+  /* Accent & Interactive */
+  --accent: #A47764;
+  /* Mocha Mousse */
+  --accent-light: #B88775;
   --accent-foreground: #FFFFFF;
-  --muted: #F3F4F6;
-  --muted-foreground: #6B7280;
-  --border: #E5E7EB;
+
+  /* Text Colors */
+  --text-muted: #8B7355;
+  --warm-gray: #A89080;
+
+  /* Semantic Colors */
+  --success: #7DB36E;
+  --danger: #C97B6B;
+  --info: #6A9EC4;
+
+  /* UI Elements */
+  --border: #E8DFD8;
+  --input: #FFFFFF;
+  --muted: #F5EDE6;
+  --muted-foreground: #8B7355;
+  --ring: #A47764;
+
+  /* Spacing & Sizing */
   --radius: 0.75rem;
 }
 
-/* Base Styles */
+/* Dark Theme Override */
+.dark {
+  --primary: #14B8A6;
+  /* Lighter teal */
+  --background: #0F172A;
+  /* Dark slate */
+  --foreground: #F8FAFC;
+  /* Light slate */
+  --card: #1E293B;
+  /* Slate */
+  --card-foreground: #F8FAFC;
+
+  --accent: #14B8A6;
+  --accent-light: #2DD4BF;
+  --accent-foreground: #0F172A;
+
+  --border: #334155;
+  --input: #1E293B;
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+}
+
+/* Light Theme (Teal) - Optional */
+.light-teal {
+  --primary: #0F766E;
+  /* Teal */
+  --background: #F8FAFC;
+  /* Light slate */
+  --foreground: #0F172A;
+  /* Dark slate */
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+
+  --accent: #0F766E;
+  --accent-light: #14B8A6;
+  --accent-foreground: #FFFFFF;
+
+  --border: #E2E8F0;
+  --input: #FFFFFF;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+}
+
+/* ============================================
+   Base Styles - Accessibility First
+   ============================================ */
+
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 1.125rem;
+  /* 18px - NOT 16px for readability */
   line-height: 1.75;
+  /* Generous line height */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Typography - ACCESSIBILITY: Large and clear */
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Playfair Display', Georgia, serif;
+  color: var(--foreground);
+  font-weight: 700;
 }
 
-/* Button Styles */
+h1 {
+  font-size: 3rem;
+  /* 48px */
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 2.5rem;
+  /* 40px */
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 2rem;
+  /* 32px */
+  line-height: 1.4;
+}
+
+/* ============================================
+   Component Styles
+   ============================================ */
+
+/* Voice Recording Button - PRIMARY action */
 .btn-voice-primary {
   display: flex;
   align-items: center;
@@ -37,34 +145,162 @@ h3 {
   gap: 1rem;
   width: 100%;
   min-height: 6rem;
+  /* 96px - LARGE touch target */
   font-size: 1.25rem;
   font-weight: 600;
   background: var(--accent);
   color: var(--accent-foreground);
   border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08);
-  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  transition: all 0.2s ease;
   border: none;
   cursor: pointer;
 }
 
 .btn-voice-primary:hover {
-  opacity: 0.9;
+  background: var(--accent-light);
   transform: translateY(-2px);
+  box-shadow: 0 6px 8px -1px rgb(0 0 0 / 0.15);
 }
 
-/* Accessibility */
+.btn-voice-primary:active {
+  transform: translateY(0);
+}
+
+/* Cards */
+.card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: border-color 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--accent);
+}
+
+/* ============================================
+   Accessibility Features
+   ============================================ */
+
+/* ACCESSIBILITY: Visible focus indicators */
 *:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--accent);
 }
 
+/* ACCESSIBILITY: Ensure buttons are large enough */
 button {
   min-height: 48px;
+  /* Minimum 48px for touch targets */
+  touch-action: manipulation;
+  /* Prevent double-tap zoom */
 }
 
-input,
+/* ACCESSIBILITY: Large form inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
 textarea {
   min-height: 48px;
   font-size: 1.125rem;
+  /* 18px */
+  padding: 0.75rem 1rem;
+  background: var(--input);
+  color: var(--foreground);
+  border: 2px solid var(--border);
+  border-radius: 0.5rem;
+  transition: border-color 0.2s ease;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+textarea {
+  padding: 1rem;
+  line-height: 1.75;
+}
+
+/* ACCESSIBILITY: Clear link styling */
+a {
+  color: var(--info);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+/* ACCESSIBILITY: Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+/* Skip to main content (accessibility) */
+.skip-to-main {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: var(--accent);
+  color: var(--accent-foreground);
+  padding: 0.75rem 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 500;
+  transition: top 0.2s;
+  z-index: 50;
+  border-radius: 0 0 0.5rem 0;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}
+
+/* Text utilities */
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.text-danger {
+  color: var(--danger);
+}
+
+.text-info {
+  color: var(--info);
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    font-size: 12pt;
+  }
+
+  .no-print {
+    display: none !important;
+  }
 }
