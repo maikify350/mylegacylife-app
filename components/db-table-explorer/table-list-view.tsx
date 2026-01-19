@@ -5,6 +5,7 @@ import { TableInfo } from './types'
 interface TableListViewProps {
     tables: TableInfo[]
     isLoading: boolean
+    onViewTable: (tableName: string) => void
 }
 
 const CATEGORY_LABELS: Record<string, { label: string; icon: string }> = {
@@ -27,7 +28,7 @@ const TABLE_ICONS: Record<string, string> = {
     activity_logs: '📉'
 }
 
-export function TableListView({ tables, isLoading }: TableListViewProps) {
+export function TableListView({ tables, isLoading, onViewTable }: TableListViewProps) {
     // Group tables by category
     const groupedTables = tables.reduce((acc, table) => {
         const category = table.category || 'other'
@@ -127,10 +128,7 @@ export function TableListView({ tables, isLoading }: TableListViewProps) {
                                             {!hasError && (
                                                 <button
                                                     className="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                                                    onClick={() => {
-                                                        // Phase 2: Open detail view
-                                                        console.log('View table:', table.name)
-                                                    }}
+                                                    onClick={() => onViewTable(table.name)}
                                                 >
                                                     View →
                                                 </button>
