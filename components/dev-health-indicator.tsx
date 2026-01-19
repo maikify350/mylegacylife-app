@@ -22,6 +22,7 @@ export function DevHealthIndicator() {
     const panelRef = useRef<HTMLDivElement>(null)
     const logEndRef = useRef<HTMLDivElement>(null)
     const [logRefreshTrigger, setLogRefreshTrigger] = useState(0)
+    const [logCount, setLogCount] = useState(0) // Client-side log count to avoid hydration mismatch
 
     // Load position from localStorage on mount
     useEffect(() => {
@@ -233,6 +234,7 @@ export function DevHealthIndicator() {
         // Real-time log refresh (tail -f behavior)
         const logRefreshInterval = setInterval(() => {
             setLogRefreshTrigger(prev => prev + 1)
+            setLogCount(errorLog.length + logger.getLogs().length) // Update count
         }, 500) // Refresh logs every 500ms
 
         return () => {
@@ -330,7 +332,7 @@ export function DevHealthIndicator() {
                     onClick={() => setShowLog(!showLog)}
                     className="flex-1 px-2 py-1 text-xs bg-white/10 hover:bg-white/20 rounded transition-colors"
                 >
-                    {showLog ? 'Hide Log' : 'View Log'} ({errorLog.length + logger.getLogs().length})
+                    {showLog ? 'Hide Log' : 'View Log'} ({logCount})
                 </button>
                 <button
                     onClick={() => {
