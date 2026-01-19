@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { logger } from '@/lib/logger'
+import { TableExplorerDialog } from '@/components/db-table-explorer/table-explorer-dialog'
 
 export function DevHealthIndicator() {
     const [supabaseStatus, setSupabaseStatus] = useState<'healthy' | 'error' | 'checking'>('checking')
@@ -23,6 +24,7 @@ export function DevHealthIndicator() {
     const logEndRef = useRef<HTMLDivElement>(null)
     const [logRefreshTrigger, setLogRefreshTrigger] = useState(0)
     const [logCount, setLogCount] = useState(0) // Client-side log count to avoid hydration mismatch
+    const [showTables, setShowTables] = useState(false) // Table explorer dialog
 
     // Load position from localStorage on mount
     useEffect(() => {
@@ -388,6 +390,14 @@ export function DevHealthIndicator() {
                 </div>
             )}
 
+            {/* Tables Explorer Button */}
+            <button
+                onClick={() => setShowTables(true)}
+                className="w-full px-2 py-1 text-xs bg-indigo-600/20 hover:bg-indigo-600/30 rounded transition-colors"
+            >
+                🗄️ Tables
+            </button>
+
 
             {/* App Logs Display */}
             {showLog && (() => {
@@ -451,6 +461,12 @@ export function DevHealthIndicator() {
                 className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-white/20 transition-colors"
                 style={{ cursor: isResizing ? 'ns-resize' : 'ns-resize' }}
                 title="Drag to resize"
+            />
+
+            {/* Table Explorer Dialog */}
+            <TableExplorerDialog
+                open={showTables}
+                onClose={() => setShowTables(false)}
             />
         </div>
     )
