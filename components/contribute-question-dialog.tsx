@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { checkGrammar } from '@/lib/languagetool'
+import { logger } from '@/lib/logger'
 
 interface ContributeQuestionDialogProps {
     open: boolean
@@ -65,11 +66,17 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
 
         if (questionText.length < 10) {
             setError('Question must be at least 10 characters')
+            logger.warning('UI', 'Question too short', { length: questionText.length })
             return
         }
 
         setSubmitting(true)
         setError('')
+
+        logger.info('UI', 'Submitting question contribution', {
+            email,
+            questionLength: questionText.length
+        })
 
         try {
             const response = await fetch('/api/contribute-question', {
@@ -85,17 +92,24 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
             const data = await response.json()
 
             if (!response.ok) {
+                logger.error('UI', 'Question submission failed', { error: data.error })
                 setError(data.error || 'Failed to submit question')
                 return
             }
 
+            logger.notice('UI', 'Question submitted successfully', { questionId: data.question_id })
+
             if (addMore) {
                 setQuestionText('')
                 setError('')
+                logger.info('UI', 'User adding another question')
             } else {
                 setStep('success')
             }
         } catch (err) {
+            logger.error('UI', 'Network error submitting question', {
+                error: err instanceof Error ? err.message : 'Unknown error'
+            })
             setError('Network error. Please try again.')
         } finally {
             setSubmitting(false)
