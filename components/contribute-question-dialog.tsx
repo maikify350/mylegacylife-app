@@ -138,37 +138,39 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
                                             <li>And more!</li>
                                         </ul>
                                     </div>
-                                    <div className="space-y-3 pt-2">
-                                        <div>
-                                            <label htmlFor="contributor-email" className="text-sm font-medium">Email (Required)</label>
-                                            <Input
-                                                id="contributor-email"
-                                                name="email"
-                                                type="email"
-                                                autoComplete="email"
-                                                placeholder="your@email.com"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                className="mt-1"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label htmlFor="contributor-phone" className="text-sm font-medium">Phone (Optional)</label>
-                                            <Input
-                                                id="contributor-phone"
-                                                name="tel"
-                                                type="tel"
-                                                autoComplete="tel"
-                                                placeholder="(555) 123-4567"
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                className="mt-1"
-                                            />
-                                        </div>
-                                    </div>
-                                    {error && <p className="text-destructive text-sm">{error}</p>}
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
+
+                            {/* Input fields outside AlertDialogDescription so they're editable */}
+                            <div className="space-y-3 px-6 pb-2">
+                                <div>
+                                    <label htmlFor="contributor-email" className="text-sm font-medium">Email (Required)</label>
+                                    <Input
+                                        id="contributor-email"
+                                        name="email"
+                                        type="email"
+                                        autoComplete="email"
+                                        placeholder="your@email.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="mt-1"
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="contributor-phone" className="text-sm font-medium">Phone (Optional)</label>
+                                    <Input
+                                        id="contributor-phone"
+                                        name="tel"
+                                        type="tel"
+                                        autoComplete="tel"
+                                        placeholder="(555) 123-4567"
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value)}
+                                        className="mt-1"
+                                    />
+                                </div>
+                                {error && <p className="text-destructive text-sm">{error}</p>}
+                            </div>
                             <AlertDialogFooter>
                                 <Button variant="outline" onClick={handleClose}>Cancel</Button>
                                 <Button onClick={handleStart} className="bg-[#4A3728] hover:bg-[#5A4738]">
