@@ -330,7 +330,7 @@ export function DevHealthIndicator() {
                     onClick={() => setShowLog(!showLog)}
                     className="flex-1 px-2 py-1 text-xs bg-white/10 hover:bg-white/20 rounded transition-colors"
                 >
-                    {showLog ? 'Hide Log' : 'View Log'} ({errorLog.length})
+                    {showLog ? 'Hide Log' : 'View Log'} ({errorLog.length + logger.getLogs().length})
                 </button>
                 <button
                     onClick={() => setErrorLog([])}
@@ -413,16 +413,18 @@ export function DevHealthIndicator() {
                                 </button>
                             </div>
                         </div>
-                        {combinedLogs.map((entry, i) => (
-                            <div key={i} className={`text-xs border-l-2 pl-2 ${entry.source === 'API Error' ? 'border-red-500' : 'border-blue-500'}`}>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-400">{entry.time}</span>
-                                    <span className="text-[10px] text-gray-500">{entry.source}</span>
+                        <div className="mt-1">
+                            {combinedLogs.map((entry, i) => (
+                                <div key={i} className={`text-xs border-l-2 pl-2 mb-1 ${entry.source === 'API Error' ? 'border-red-500' : 'border-blue-500'}`}>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-400">{entry.time}</span>
+                                        <span className="text-[10px] text-gray-500">{entry.source}</span>
+                                    </div>
+                                    <div className="text-yellow-400 font-bold">{entry.service}</div>
+                                    <div className={entry.source === 'API Error' ? 'text-red-300' : 'text-blue-300'}>{entry.message}</div>
                                 </div>
-                                <div className="text-yellow-400 font-bold">{entry.service}</div>
-                                <div className={entry.source === 'API Error' ? 'text-red-300' : 'text-blue-300'}>{entry.message}</div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                         {/* Auto-scroll anchor */}
                         <div ref={logEndRef} />
                     </div>
