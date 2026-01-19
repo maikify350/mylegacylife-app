@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS public.user_progress CASCADE;
 DROP TABLE IF EXISTS public.answers CASCADE;
 DROP TABLE IF EXISTS public.contributed_questions CASCADE;
 DROP TABLE IF EXISTS public.questions CASCADE;
+DROP TABLE IF EXISTS public.question_categories CASCADE;
 DROP TABLE IF EXISTS public.subscribers CASCADE;
 
 -- ============================================
@@ -36,11 +37,29 @@ CREATE TABLE public.subscribers (
     updated_by UUID NULL
 );
 
+-- QUESTION_CATEGORIES TABLE
+CREATE TABLE public.question_categories (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    icon VARCHAR(50), -- Emoji or icon identifier
+    color VARCHAR(20), -- Hex color code
+    order_index INTEGER,
+    is_active BOOLEAN DEFAULT TRUE,
+    
+    -- Audit fields
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_by UUID NULL,
+    updated_by UUID NULL
+);
+
 -- QUESTIONS TABLE
 CREATE TABLE public.questions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     question_text TEXT NOT NULL,
-    category VARCHAR(100),
+    category_id UUID REFERENCES public.question_categories(id),
+    category VARCHAR(100), -- Legacy field, will migrate to category_id
     order_index INTEGER,
     is_active BOOLEAN DEFAULT TRUE,
     
@@ -142,6 +161,20 @@ CREATE TABLE public.contributed_questions (
 );
 
 -- ============================================
+-- SEED QUESTION CATEGORIES
+-- ============================================
+INSERT INTO public.question_categories (name, description, icon, color, order_index) VALUES
+('Childhood & Family', 'Early life, family background, and formative years', '👶', '#FF6B6B', 1),
+('Education & Career', 'School, college, work, and professional journey', '🎓', '#4ECDC4', 2),
+('Relationships & Love', 'Friendships, romance, marriage, and connections', '❤️', '#FFE66D', 3),
+('Achievements & Milestones', 'Major accomplishments and life events', '🏆', '#95E1D3', 4),
+('Challenges & Growth', 'Obstacles overcome and personal development', '💪', '#F38181', 5),
+('Hobbies & Interests', 'Passions, activities, and what brings joy', '🎨', '#AA96DA', 6),
+('Travel & Adventure', 'Places visited and memorable experiences', '✈️', '#FCBAD3', 7),
+('Values & Beliefs', 'Core principles, faith, and worldview', '🙏', '#A8D8EA', 8),
+('Legacy & Wisdom', 'Lessons learned and advice for future generations', '📚', '#FFD93D', 9);
+
+-- ============================================
 -- RESTORE QUESTIONS DATA
 -- ============================================
 INSERT INTO public.questions (id, question_text, category, order_index, is_active, created_at, updated_at, created_by, updated_by)
@@ -161,6 +194,8 @@ FROM questions_backup;
 -- INDEXES
 -- ============================================
 CREATE INDEX idx_subscribers_email ON public.subscribers(email);
+CREATE INDEX idx_question_categories_name ON public.question_categories(name);
+CREATE INDEX idx_questions_category_id ON public.questions(category_id);
 CREATE INDEX idx_answers_subscriber ON public.answers(subscriber_id);
 CREATE INDEX idx_answers_question ON public.answers(question_id);
 CREATE INDEX idx_user_progress_subscriber ON public.user_progress(subscriber_id);
@@ -182,6 +217,11 @@ $$ LANGUAGE 'plpgsql';
 
 CREATE TRIGGER update_subscribers_updated_at
     BEFORE UPDATE ON public.subscribers
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_question_categories_updated_at
+    BEFORE UPDATE ON public.question_categories
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
@@ -209,6 +249,7 @@ CREATE TRIGGER update_contributed_questions_updated_at
 -- ROW LEVEL SECURITY
 -- ============================================
 ALTER TABLE public.subscribers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.question_categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.answers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_progress ENABLE ROW LEVEL SECURITY;
@@ -216,6 +257,7 @@ ALTER TABLE public.contributed_questions ENABLE ROW LEVEL SECURITY;
 
 -- Policies (allow all for development)
 CREATE POLICY "Allow all for now" ON public.subscribers FOR ALL USING (true);
+CREATE POLICY "Allow all for now" ON public.question_categories FOR ALL USING (true);
 CREATE POLICY "Allow all for now" ON public.questions FOR ALL USING (true);
 CREATE POLICY "Allow all for now" ON public.answers FOR ALL USING (true);
 CREATE POLICY "Allow all for now" ON public.user_progress FOR ALL USING (true);
