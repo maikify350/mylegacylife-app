@@ -140,12 +140,12 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
                             <AlertDialogHeader>
                                 <AlertDialogTitle className="text-2xl">Thank You for Contributing! 🎁</AlertDialogTitle>
                                 <AlertDialogDescription className="text-base space-y-4 pt-4">
-                                    <p>
+                                    <div>
                                         Thank you for taking the moment to contribute questions! For your efforts, we will provide
                                         you with credits in our software or gifts that we randomly select on a monthly basis.
-                                    </p>
+                                    </div>
                                     <div className="bg-muted/50 p-4 rounded-lg">
-                                        <p className="font-semibold mb-2">Examples of rewards:</p>
+                                        <div className="font-semibold mb-2">Examples of rewards:</div>
                                         <ul className="list-disc list-inside space-y-1 text-sm">
                                             <li>Engraved coaster with your monogram</li>
                                             <li>MyLegacyLife subscription credits</li>
