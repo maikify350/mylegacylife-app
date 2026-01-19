@@ -71,19 +71,19 @@ export function TableListView({ tables, isLoading }: TableListViewProps) {
     }
 
     return (
-        <div className="space-y-6 p-4 max-h-[500px] overflow-y-auto">
+        <div className="space-y-3 p-2 max-h-[500px] overflow-y-auto">
             {sortedCategories.map(category => {
                 const categoryInfo = CATEGORY_LABELS[category] || CATEGORY_LABELS.other
                 const categoryTables = groupedTables[category]
 
                 return (
                     <div key={category}>
-                        <div className="flex items-center gap-2 mb-3 text-sm font-semibold text-gray-600">
+                        <div className="flex items-center gap-1 mb-1 text-xs font-semibold text-gray-600">
                             <span>{categoryInfo.icon}</span>
                             <span>{categoryInfo.label}</span>
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-0.5">
                             {categoryTables.map(table => {
                                 const icon = TABLE_ICONS[table.name] || '📄'
                                 const hasError = !!table.error
@@ -92,7 +92,7 @@ export function TableListView({ tables, isLoading }: TableListViewProps) {
                                     <div
                                         key={table.name}
                                         className={`
-                                            flex items-center justify-between p-3 rounded-lg border
+                                            flex items-center justify-between px-2 py-1 rounded border
                                             ${hasError
                                                 ? 'bg-red-50 border-red-200'
                                                 : 'bg-white border-gray-200 hover:border-blue-300 hover:shadow-sm'
@@ -100,33 +100,33 @@ export function TableListView({ tables, isLoading }: TableListViewProps) {
                                             transition-all cursor-pointer
                                         `}
                                     >
-                                        <div className="flex items-center gap-3 flex-1">
-                                            <span className="text-2xl">{icon}</span>
+                                        <div className="flex items-center gap-2 flex-1">
+                                            <span className="text-lg">{icon}</span>
                                             <div className="flex-1">
-                                                <div className="font-medium text-gray-900">
+                                                <div className="font-medium text-sm text-gray-900">
                                                     {table.name}
                                                 </div>
                                                 {hasError && (
-                                                    <div className="text-xs text-red-600 mt-0.5">
+                                                    <div className="text-xs text-red-600">
                                                         Error: {table.error}
                                                     </div>
                                                 )}
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2">
                                             <div className={`
-                                                text-sm font-semibold px-3 py-1 rounded-full
+                                                text-xs font-semibold px-2 py-0.5 rounded-full
                                                 ${hasError
                                                     ? 'bg-red-100 text-red-700'
                                                     : 'bg-blue-100 text-blue-700'
                                                 }
                                             `}>
-                                                {hasError ? '—' : `${table.count} records`}
+                                                {hasError ? '—' : `${table.count}`}
                                             </div>
                                             {!hasError && (
                                                 <button
-                                                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                                    className="text-blue-600 hover:text-blue-800 text-xs font-medium"
                                                     onClick={() => {
                                                         // Phase 2: Open detail view
                                                         console.log('View table:', table.name)

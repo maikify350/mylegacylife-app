@@ -74,25 +74,25 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
 
     return (
         <AlertDialog open={open} onOpenChange={onClose}>
-            <AlertDialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-                <AlertDialogHeader>
-                    <AlertDialogTitle className="flex items-center gap-2 text-2xl">
+            <AlertDialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-1">
+                <AlertDialogHeader className="px-2 pt-2 pb-1">
+                    <AlertDialogTitle className="flex items-center gap-2 text-xl">
                         <span>🗄️</span>
                         <span>Database Table Explorer</span>
                     </AlertDialogTitle>
                 </AlertDialogHeader>
 
                 {/* Summary Stats */}
-                <div className="px-6 pb-2 space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
+                <div className="px-2 pb-1 space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-1">
                                 <span className="font-semibold">📊 Database:</span>
                                 <span className="text-gray-600">mylegacylife</span>
                             </div>
                             {data && (
                                 <>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1">
                                         <span className="font-semibold">📈 Total:</span>
                                         <span className="text-gray-600">
                                             {data.totalTables} tables, {data.totalRecords.toLocaleString()} records
@@ -101,14 +101,14 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                                 </>
                             )}
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                             <span className="text-gray-500 text-xs">
                                 🔄 {getTimeSinceRefresh()}
                             </span>
                             <button
                                 onClick={handleRefresh}
                                 disabled={isLoading}
-                                className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 {isLoading ? 'Refreshing...' : 'Refresh'}
                             </button>
@@ -116,7 +116,7 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                     </div>
 
                     {error && (
-                        <div className="bg-red-50 border border-red-200 rounded p-3 text-sm text-red-700">
+                        <div className="bg-red-50 border border-red-200 rounded p-2 text-xs text-red-700">
                             <span className="font-semibold">Error:</span> {error}
                         </div>
                     )}
@@ -131,10 +131,10 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-3 border-t flex justify-end">
+                <div className="px-2 py-1 border-t flex justify-end">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded transition-colors"
+                        className="px-3 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded transition-colors"
                     >
                         Close
                     </button>
