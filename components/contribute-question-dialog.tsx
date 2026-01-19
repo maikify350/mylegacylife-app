@@ -140,18 +140,18 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
                             <AlertDialogHeader>
                                 <AlertDialogTitle className="text-2xl">Thank You for Contributing! 🎁</AlertDialogTitle>
                                 <AlertDialogDescription className="text-base space-y-4 pt-4">
-                                    <div>
+                                    <span className="block">
                                         Thank you for taking the moment to contribute questions! For your efforts, we will provide
                                         you with credits in our software or gifts that we randomly select on a monthly basis.
-                                    </div>
-                                    <div className="bg-muted/50 p-4 rounded-lg">
-                                        <div className="font-semibold mb-2">Examples of rewards:</div>
-                                        <ul className="list-disc list-inside space-y-1 text-sm">
-                                            <li>Engraved coaster with your monogram</li>
-                                            <li>MyLegacyLife subscription credits</li>
-                                            <li>And more!</li>
-                                        </ul>
-                                    </div>
+                                    </span>
+                                    <span className="block bg-muted/50 p-4 rounded-lg">
+                                        <span className="block font-semibold mb-2">Examples of rewards:</span>
+                                        <span className="block">
+                                            • Engraved coaster with your monogram<br />
+                                            • MyLegacyLife subscription credits<br />
+                                            • And more!
+                                        </span>
+                                    </span>
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
 
