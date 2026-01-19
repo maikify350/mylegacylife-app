@@ -5,7 +5,8 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Image from '@tiptap/extension-image'
 import { Button } from '@/components/ui/button'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { ImageEditorDialog } from './image-editor-dialog'
 
 interface RichTextEditorProps {
     content: string
@@ -15,17 +16,23 @@ interface RichTextEditorProps {
 
 export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEditorProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const [showImageEditor, setShowImageEditor] = useState(false)
+    const [selectedImage, setSelectedImage] = useState<string>('')
 
     const editor = useEditor({
         extensions: [
             StarterKit,
             Underline,
             Image.configure({
-                inline: true,
+                inline: false,
                 allowBase64: true,
+                HTMLAttributes: {
+                    class: 'rounded-lg max-w-full h-auto my-4',
+                },
             }),
         ],
         content: content,
+        immediatelyRender: false,
         editorProps: {
             attributes: {
                 class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl focus:outline-none min-h-[260px] p-4 text-lg',
@@ -47,11 +54,12 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
         const file = event.target.files?.[0]
         if (!file || !editor) return
 
-        // Convert to base64 for now (temporary solution until gallery is built)
+        // Convert to base64 and open editor dialog
         const reader = new FileReader()
         reader.onload = (e) => {
             const base64 = e.target?.result as string
-            editor.chain().focus().setImage({ src: base64 }).run()
+            setSelectedImage(base64)
+            setShowImageEditor(true)
         }
         reader.readAsDataURL(file)
 
@@ -61,12 +69,26 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
         }
     }
 
+    const handleImageSave = (editedImage: string, caption: string) => {
+        if (!editor) return
+
+        // Insert the edited image
+        editor.chain().focus().setImage({
+            src: editedImage,
+            alt: caption || undefined,
+            title: caption || undefined,
+        }).run()
+
+        setShowImageEditor(false)
+        setSelectedImage('')
+    }
+
     if (!editor) {
         return null
     }
 
     return (
-        <div className="border-2 border-input rounded-lg bg-background">
+        <div className="border-2 border-black rounded-lg bg-background resize-y overflow-auto" style={{ minHeight: '260px' }}>
             {/* Hidden file input */}
             <input
                 ref={fileInputRef}
@@ -157,6 +179,14 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
 
             {/* Editor Content */}
             <EditorContent editor={editor} />
+
+            {/* Image Editor Dialog */}
+            <ImageEditorDialog
+                open={showImageEditor}
+                onClose={() => setShowImageEditor(false)}
+                imageSrc={selectedImage}
+                onSave={handleImageSave}
+            />
         </div>
     )
 }
