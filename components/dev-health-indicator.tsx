@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { logger } from '@/lib/logger'
 
 export function DevHealthIndicator() {
     const [supabaseStatus, setSupabaseStatus] = useState<'healthy' | 'error' | 'checking'>('checking')
@@ -39,12 +40,16 @@ export function DevHealthIndicator() {
         localStorage.setItem('dev-health-visible', String(isVisible))
     }, [isVisible])
 
-    // F10 hotkey toggle
+    // F10 hotkey toggle panel, F12 hotkey toggle log
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'F10') {
                 e.preventDefault()
                 setIsVisible(prev => !prev)
+            }
+            if (e.key === 'F12') {
+                e.preventDefault()
+                setShowLog(prev => !prev)
             }
         }
 
@@ -203,7 +208,7 @@ export function DevHealthIndicator() {
             <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
                 <span className="font-bold">DEV MODE</span>
-                <span className="text-gray-400 ml-auto text-[10px]">(F10 to toggle)</span>
+                <span className="text-gray-400 ml-auto text-[10px]">F10: Toggle | F12: Log</span>
             </div>
 
             <div className="h-px bg-white/30 my-0.5" />
@@ -285,24 +290,58 @@ export function DevHealthIndicator() {
                 </div>
             )}
 
-            {/* Error Log Display */}
-            {showLog && errorLog.length > 0 && (
-                <div className="mt-1 max-h-48 overflow-y-auto bg-black/50 rounded p-2 space-y-1">
-                    {errorLog.map((entry, i) => (
-                        <div key={i} className="text-xs border-l-2 border-red-500 pl-2">
-                            <div className="text-gray-400">{entry.time}</div>
-                            <div className="text-yellow-400 font-bold">{entry.service}</div>
-                            <div className="text-red-300">{entry.message}</div>
-                        </div>
-                    ))}
-                </div>
-            )}
 
-            {showLog && errorLog.length === 0 && (
-                <div className="mt-1 text-xs text-gray-400 text-center py-2">
-                    No errors logged
-                </div>
-            )}
+            {/* App Logs Display */}
+            {showLog && (() => {
+                const appLogs = logger.getLogs()
+                const combinedLogs = [
+                    ...errorLog.map(e => ({ ...e, source: 'API Error' as const })),
+                    ...appLogs.map(l => ({
+                        time: new Date(l.timestamp).toLocaleTimeString(),
+                        service: l.category,
+                        message: `[${l.level.toUpperCase()}] ${l.message}`,
+                        source: 'App' as const
+                    }))
+                ].sort((a, b) => a.time.localeCompare(b.time)).slice(-50) // Last 50 entries
+
+                return combinedLogs.length > 0 ? (
+                    <div className="mt-1 max-h-64 overflow-y-auto bg-black/50 rounded p-2 space-y-1">
+                        <div className="flex justify-between items-center mb-1 sticky top-0 bg-black/80 pb-1">
+                            <span className="text-[10px] text-gray-400">
+                                Mode: {logger.getMode().toUpperCase()} | {combinedLogs.length} entries
+                            </span>
+                            <div className="flex gap-1">
+                                <button
+                                    onClick={() => logger.setMode('concise')}
+                                    className={`text-[10px] px-1 rounded ${logger.getMode() === 'concise' ? 'bg-blue-600' : 'bg-white/10'}`}
+                                >
+                                    Concise
+                                </button>
+                                <button
+                                    onClick={() => logger.setMode('verbose')}
+                                    className={`text-[10px] px-1 rounded ${logger.getMode() === 'verbose' ? 'bg-blue-600' : 'bg-white/10'}`}
+                                >
+                                    Verbose
+                                </button>
+                            </div>
+                        </div>
+                        {combinedLogs.map((entry, i) => (
+                            <div key={i} className={`text-xs border-l-2 pl-2 ${entry.source === 'API Error' ? 'border-red-500' : 'border-blue-500'}`}>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-400">{entry.time}</span>
+                                    <span className="text-[10px] text-gray-500">{entry.source}</span>
+                                </div>
+                                <div className="text-yellow-400 font-bold">{entry.service}</div>
+                                <div className={entry.source === 'API Error' ? 'text-red-300' : 'text-blue-300'}>{entry.message}</div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="mt-1 text-xs text-gray-400 text-center py-2">
+                        No logs yet
+                    </div>
+                )
+            })()}
         </div>
     )
 }
