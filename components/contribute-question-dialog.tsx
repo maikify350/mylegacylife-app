@@ -140,9 +140,12 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
                                     </div>
                                     <div className="space-y-3 pt-2">
                                         <div>
-                                            <label className="text-sm font-medium">Email (Required)</label>
+                                            <label htmlFor="contributor-email" className="text-sm font-medium">Email (Required)</label>
                                             <Input
+                                                id="contributor-email"
+                                                name="email"
                                                 type="email"
+                                                autoComplete="email"
                                                 placeholder="your@email.com"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
@@ -150,9 +153,12 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
                                             />
                                         </div>
                                         <div>
-                                            <label className="text-sm font-medium">Phone (Optional)</label>
+                                            <label htmlFor="contributor-phone" className="text-sm font-medium">Phone (Optional)</label>
                                             <Input
+                                                id="contributor-phone"
+                                                name="tel"
                                                 type="tel"
+                                                autoComplete="tel"
                                                 placeholder="(555) 123-4567"
                                                 value={phone}
                                                 onChange={(e) => setPhone(e.target.value)}
