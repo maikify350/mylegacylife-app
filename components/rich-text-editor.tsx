@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { useEffect, useRef, useState } from 'react'
 import { ImageEditorDialog } from './image-editor-dialog'
 import { checkGrammar } from '@/lib/languagetool'
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 
 interface RichTextEditorProps {
     content: string
@@ -27,6 +28,8 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
     const [selectedImage, setSelectedImage] = useState<string>('')
     const [showColorPicker, setShowColorPicker] = useState(false)
     const [showHighlightPicker, setShowHighlightPicker] = useState(false)
+    const [showGrammarDialog, setShowGrammarDialog] = useState(false)
+    const [grammarResults, setGrammarResults] = useState<{ count: number; errors: string }>({ count: 0, errors: '' })
 
     const editor = useEditor({
         extensions: [
@@ -106,7 +109,8 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
 
         const text = editor.getText()
         if (!text.trim()) {
-            alert('Please write some text first!')
+            setGrammarResults({ count: 0, errors: 'Please write some text first!' })
+            setShowGrammarDialog(true)
             return
         }
 
@@ -114,16 +118,21 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
             const matches = await checkGrammar(text)
 
             if (matches.length === 0) {
-                alert('✓ No grammar or spelling errors found!')
+                setGrammarResults({ count: 0, errors: '✓ No grammar or spelling errors found!' })
             } else {
                 const errors = matches.slice(0, 5).map((match, i) =>
                     `${i + 1}. ${match.message}\n   Suggestion: ${match.replacements[0]?.value || 'N/A'}`
                 ).join('\n\n')
 
-                alert(`Found ${matches.length} issue(s):\n\n${errors}${matches.length > 5 ? '\n\n...and more' : ''}`)
+                setGrammarResults({
+                    count: matches.length,
+                    errors: `${errors}${matches.length > 5 ? '\n\n...and more' : ''}`
+                })
             }
+            setShowGrammarDialog(true)
         } catch (error) {
-            alert('Error checking grammar. Please try again.')
+            setGrammarResults({ count: 0, errors: 'Error checking grammar. Please try again.' })
+            setShowGrammarDialog(true)
         }
     }
 
@@ -345,6 +354,25 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
                 imageSrc={selectedImage}
                 onSave={handleImageSave}
             />
+
+            {/* Grammar Check Results Dialog */}
+            <AlertDialog open={showGrammarDialog} onOpenChange={setShowGrammarDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {grammarResults.count === 0 ? 'Grammar Check' : `Found ${grammarResults.count} issue(s)`}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="whitespace-pre-wrap">
+                            {grammarResults.errors}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction className="bg-[#4A3728] hover:bg-[#5A4738]">
+                            OK
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }
