@@ -64,7 +64,20 @@ create table if not exists public.contributed_questions (
 -- Indexes
 create index if not exists idx_contributed_questions_email on public.contributed_questions(contributor_email);
 create index if not exists idx_contributed_questions_status on public.contributed_questions(status) where status = 'submitted';
-create index if not exists idx_contributed_questions_subscriber on public.contributed_questions(subscriber_id) where subscriber_id is not null;
+
+-- Only create subscriber index if the column exists (it might not if subscribers table doesn't exist yet)
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'contributed_questions' AND column_name = 'subscriber_id'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS idx_contributed_questions_subscriber 
+        ON public.contributed_questions(subscriber_id) 
+        WHERE subscriber_id IS NOT NULL;
+    END IF;
+END $$;
+
 create index if not exists idx_contributed_questions_created on public.contributed_questions(created_at desc);
 create index if not exists idx_contributed_questions_reward on public.contributed_questions(reward_status) where reward_status in ('pending', 'notified');
 
