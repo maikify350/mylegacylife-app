@@ -25,6 +25,7 @@ export function DevHealthIndicator() {
     const [logRefreshTrigger, setLogRefreshTrigger] = useState(0)
     const [logCount, setLogCount] = useState(0) // Client-side log count to avoid hydration mismatch
     const [showTables, setShowTables] = useState(false) // Table explorer dialog
+    const [tableCount, setTableCount] = useState(0) // Total table records count
 
     // Load position from localStorage on mount
     useEffect(() => {
@@ -237,6 +238,12 @@ export function DevHealthIndicator() {
         const logRefreshInterval = setInterval(() => {
             setLogRefreshTrigger(prev => prev + 1)
             setLogCount(errorLog.length + logger.getLogs().length) // Update count
+
+            // Also update table count
+            fetch('/api/admin/tables')
+                .then(res => res.json())
+                .then(data => setTableCount(data.totalRecords || 0))
+                .catch(() => { }) // Silently fail
         }, 500) // Refresh logs every 500ms
 
         return () => {
@@ -395,7 +402,7 @@ export function DevHealthIndicator() {
                 onClick={() => setShowTables(true)}
                 className="w-full px-2 py-1 text-xs bg-indigo-600/20 hover:bg-indigo-600/30 rounded transition-colors"
             >
-                🗄️ Tables
+                🗄️ Tables ({tableCount})
             </button>
 
 
