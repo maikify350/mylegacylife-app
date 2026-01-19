@@ -10,6 +10,7 @@ import Highlight from '@tiptap/extension-highlight'
 import BulletList from '@tiptap/extension-bullet-list'
 import OrderedList from '@tiptap/extension-ordered-list'
 import ListItem from '@tiptap/extension-list-item'
+import CharacterCount from '@tiptap/extension-character-count'
 import { Button } from '@/components/ui/button'
 import { useEffect, useRef, useState } from 'react'
 import { ImageEditorDialog } from './image-editor-dialog'
@@ -47,6 +48,7 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
             BulletList,
             OrderedList,
             ListItem,
+            CharacterCount,
             Image.configure({
                 inline: false,
                 allowBase64: true,
@@ -346,6 +348,11 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
 
             {/* Editor Content */}
             <EditorContent editor={editor} />
+
+            {/* Character and Word Counter */}
+            <div className="text-xs text-muted-foreground mt-1 px-2">
+                {editor?.storage.characterCount?.characters() || 0} characters · {editor?.storage.characterCount?.words() || 0} words
+            </div>
 
             {/* Image Editor Dialog */}
             <ImageEditorDialog
