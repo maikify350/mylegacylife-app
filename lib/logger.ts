@@ -56,7 +56,7 @@ class Logger {
         if (typeof window !== 'undefined') {
             localStorage.removeItem('mylegacylife_logs')
         }
-        this.info('Logger', 'Logs cleared')
+        // Don't log the clear action itself - would create a new entry
     }
 
     private saveLogs() {
