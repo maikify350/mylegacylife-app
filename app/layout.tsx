@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { DevHealthIndicator } from "@/components/dev-health-indicator";
 
 // Sans-serif font for UI (Inter)
 const inter = Inter({
@@ -52,6 +53,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body>
+        {/* Development API Health Indicator */}
+        <DevHealthIndicator />
+
         {/* Skip to main content link for accessibility */}
         <a href="#main-content" className="skip-to-main">
           Skip to main content
