@@ -99,7 +99,7 @@ export default async function QuestionsPage() {
                                                         width: '30px',
                                                         textAlign: 'right'
                                                     }}
-                                                    className="text-lg font-bold text-accent"
+                                                    className="text-lg font-extrabold text-[#4A3728]"
                                                 >
                                                     {category.start + index + 1}
                                                 </td>
