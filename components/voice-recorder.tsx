@@ -160,24 +160,15 @@ export function VoiceRecorder({
                     <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    Write or Dictate Your Story
+                    Your Answer
                 </CardTitle>
-                <CardDescription className="text-lg">
-                    <strong>💡 Recommended:</strong> Press <kbd className="px-2 py-1 bg-muted rounded border text-sm">Win</kbd> + <kbd className="px-2 py-1 bg-muted rounded border text-sm">H</kbd> (Windows) or <kbd className="px-2 py-1 bg-muted rounded border text-sm">Fn</kbd> + <kbd className="px-2 py-1 bg-muted rounded border text-sm">Fn</kbd> (Mac) for voice dictation
-                </CardDescription>
+
             </CardHeader>
 
             <CardContent className="space-y-6">
                 {/* Primary Textarea */}
-                <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                        <label className="text-xl font-semibold">Your Story</label>
-                        {transcript && (
-                            <Button variant="ghost" size="sm" onClick={clearTranscript}>
-                                Clear
-                            </Button>
-                        )}
-                    </div>
+                <div className="space-y-0" style={{ marginBottom: '0' }}>
+
 
                     <Textarea
                         value={transcript}
@@ -186,23 +177,25 @@ export function VoiceRecorder({
                             onTranscriptChange?.(e.target.value)
                         }}
                         placeholder="Click here and start typing... or use voice dictation (Win+H on Windows, Fn+Fn on Mac)"
-                        className="min-h-[300px] text-lg leading-relaxed"
+                        className="text-lg leading-relaxed"
+                        style={{ minHeight: '260px', paddingTop: '2px', paddingBottom: '2px' }}
                         autoFocus
                     />
 
-                    <div className="flex items-start gap-2 p-4 bg-info/10 rounded-lg border border-info/20">
+                    <div className="flex items-start gap-2 p-4 bg-info/10 rounded-lg border border-info/20" style={{ paddingTop: '0', paddingBottom: '0' }}>
                         <span className="text-2xl">🎤</span>
                         <div className="flex-1">
                             <p className="text-base leading-relaxed">
+                                <strong>💡 Recommended:</strong> Press <kbd className="px-1.5 py-0.5 bg-background rounded text-sm">Win</kbd> + <kbd className="px-1.5 py-0.5 bg-background rounded text-sm">H</kbd> (Windows) or <kbd className="px-1.5 py-0.5 bg-background rounded text-sm">Fn</kbd> + <kbd className="px-1.5 py-0.5 bg-background rounded text-sm">Fn</kbd> (Mac) for voice dictation
+                            </p>
+                            <p className="text-base leading-relaxed mt-2">
                                 <strong>Easy Voice Dictation:</strong> Click in the text box above, then press:
                             </p>
                             <ul className="list-disc list-inside mt-2 space-y-1 text-base">
                                 <li><strong>Windows:</strong> <kbd className="px-1.5 py-0.5 bg-background rounded text-sm">Win+H</kbd> to start dictating</li>
                                 <li><strong>Mac:</strong> Press <kbd className="px-1.5 py-0.5 bg-background rounded text-sm">Fn</kbd> key twice to start dictation</li>
                             </ul>
-                            <p className="text-sm text-muted-foreground mt-2">
-                                Your spoken words will appear where your cursor is. This works everywhere and doesn't require browser permissions!
-                            </p>
+
                         </div>
                     </div>
                 </div>
@@ -211,7 +204,7 @@ export function VoiceRecorder({
                 {isSupported && (
                     <details className="group">
                         <summary className="cursor-pointer list-none">
-                            <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors" style={{ paddingTop: '0', paddingBottom: '0' }}>
                                 <svg className="w-6 h-6 text-accent group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                 </svg>

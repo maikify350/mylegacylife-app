@@ -3,8 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
-export const dynamic = 'force-dynamic'
-
 export default async function QuestionsPage() {
     const supabase = await createClient()
 
@@ -33,8 +31,8 @@ export default async function QuestionsPage() {
     ]
 
     return (
-        <div className="min-h-screen p-8">
-            <div className="max-w-6xl mx-auto space-y-8">
+        <div className="min-h-screen p-4">
+            <div className="max-w-6xl mx-auto space-y-2">
                 {/* Header */}
                 <div className="text-center space-y-4">
                     <Link href="/">
@@ -46,7 +44,7 @@ export default async function QuestionsPage() {
                     <h1 className="text-5xl font-serif font-bold">
                         Story Questions
                     </h1>
-                    <p className="text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-2xl text-muted-foreground mx-auto">
                         {questionCount} thoughtful questions to help you share your life's memories
                     </p>
                 </div>
@@ -77,8 +75,8 @@ export default async function QuestionsPage() {
 
                     return (
                         <Card key={category.name}>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-3 text-3xl">
+                            <CardHeader style={{ paddingLeft: '8px', paddingRight: '8px', paddingTop: '8px', paddingBottom: '0' }} className="space-y-0">
+                                <CardTitle className="flex items-center gap-3 text-3xl" style={{ marginBottom: '4px' }}>
                                     <span className="text-4xl">{category.icon}</span>
                                     {category.name}
                                 </CardTitle>
@@ -86,28 +84,39 @@ export default async function QuestionsPage() {
                                     {category.count} questions in this category
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                    {categoryQuestions.map((question, index) => (
-                                        <div
-                                            key={question.id}
-                                            className="rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border-2 border-transparent hover:border-accent"
-                                            style={{
-                                                padding: '4px',
-                                                margin: '0',
-                                            }}
-                                        >
-                                            <div className="flex gap-4 items-start">
-                                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-lg font-bold">
+                            <CardContent style={{ paddingLeft: '8px', paddingRight: '8px', paddingTop: '0', paddingBottom: '2px' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                    <tbody>
+                                        {categoryQuestions.map((question, index) => (
+                                            <tr
+                                                key={question.id}
+                                                className="rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border-2 border-transparent hover:border-accent"
+                                            >
+                                                <td
+                                                    style={{
+                                                        padding: '2px 8px 2px 4px',
+                                                        verticalAlign: 'top',
+                                                        width: '30px',
+                                                        textAlign: 'right'
+                                                    }}
+                                                    className="text-lg font-bold text-accent"
+                                                >
                                                     {category.start + index + 1}
-                                                </div>
-                                                <p className="text-xl flex-1" style={{ lineHeight: '1.2', margin: '0', padding: '0' }}>
-                                                    {question.question_text}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                                </td>
+                                                <td
+                                                    style={{
+                                                        padding: '2px 4px',
+                                                        verticalAlign: 'top'
+                                                    }}
+                                                >
+                                                    <p className="text-xl" style={{ lineHeight: '1.2', margin: '0', padding: '0' }}>
+                                                        {question.question_text}
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </CardContent>
                         </Card>
                     )
@@ -115,7 +124,7 @@ export default async function QuestionsPage() {
 
                 {/* CTA */}
                 <Card className="bg-gradient-to-br from-accent/10 to-primary/10 border-2 border-accent">
-                    <CardContent className="pt-8 text-center space-y-6">
+                    <CardContent style={{ padding: '12px' }} className="text-center space-y-3">
                         <h2 className="text-3xl font-serif font-bold">
                             Ready to start answering?
                         </h2>
@@ -123,7 +132,7 @@ export default async function QuestionsPage() {
                             Try our voice recorder and see how easy it is to share your stories.
                         </p>
                         <Link href="/demo">
-                            <Button variant="voice" size="xl" className="mx-auto">
+                            <Button variant="voice" size="xl" className="mx-auto" style={{ paddingTop: '0', paddingBottom: '0' }}>
                                 <svg
                                     className="w-10 h-10"
                                     fill="none"
@@ -144,9 +153,9 @@ export default async function QuestionsPage() {
                 </Card>
 
                 {/* Footer Navigation */}
-                <div className="flex justify-center pt-8">
+                <div className="flex justify-center pt-0">
                     <Link href="/">
-                        <Button variant="outline" size="xl" className="min-w-[250px]">
+                        <Button variant="outline" size="xl" className="min-w-[250px]" style={{ paddingTop: '4px', paddingBottom: '4px' }}>
                             ← Back to Home
                         </Button>
                     </Link>

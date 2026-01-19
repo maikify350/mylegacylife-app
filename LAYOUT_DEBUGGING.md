@@ -1,20 +1,32 @@
-# Layout & Styling Troubleshooting Guide
+# Layout & Styling Debugging Guide
 
-## ⚠️ CRITICAL: Check These FIRST When Styles Don't Apply
+This document helps you quickly resolve common layout and styling issues in the MyLegacyLife.AI application.
 
-### 1. **Component Default Styles Override Inline Styles**
+## Table of Contents
+1. [Critical Issue: Component Default Styles](#critical-issue-component-default-styles)
+2. [Card Component Padding Inconsistencies](#card-component-padding-inconsistencies)
+3. [Caching Issues](#caching-issues)
+4. [Style Application Problems](#style-application-problems)
+5. [Best Practices](#best-practices)
+6. [Quick Troubleshooting Checklist](#quick-troubleshooting-checklist)
 
-**Problem**: You add inline styles or Tailwind classes, but they don't work.
+---
 
-**Root Cause**: UI components (Card, Button, etc.) have **hardcoded default classes** that override your styles.
+## Critical Issue: Component Default Styles
 
-**Example from this project**:
+### Problem: Hardcoded Padding in Card Component
+
+**Symptom**: You apply padding/margin styles to a Card component, but they don't take effect or are inconsistent.
+
+**Root Cause**: The `Card` component in `components/ui/card.tsx` previously had a hardcoded `p-6` class (24px padding) that overrode all custom spacing attempts.
+
+**Solution**:
+1. **Check `components/ui/card.tsx`** - The base `Card` component should NOT have default padding
+2. **Apply padding explicitly** where needed using inline styles or className props
+3. **Be consistent** - If you set padding on one Card, check ALL Card usages for consistency
+
+**Example of the fix**:
 ```typescript
-// ❌ BAD - Card component had p-6 hardcoded
-const Card = ({ className }) => (
-  <div className={cn("border p-6", className)} /> // p-6 = 24px padding!
-)
-
 // ✅ GOOD - No default padding
 const Card = ({ className }) => (
   <div className={cn("border", className)} />
@@ -32,6 +44,67 @@ const Card = ({ className }) => (
 - `components/ui/card.tsx` - Card, CardContent, CardHeader
 - `components/ui/button.tsx` - Button variants
 - Any custom wrapper components
+
+---
+
+## Card Component Padding Inconsistencies
+
+### Problem: Inconsistent Padding Across Card Sub-components
+
+**Symptom**: You set padding on `<Card>` but `<CardHeader>` and `<CardContent>` still have different spacing.
+
+**Root Cause**: Card has **multiple sub-components** (Card, CardHeader, CardContent, CardFooter) that each can have their own default padding. Setting padding on one doesn't affect the others.
+
+**Example of the Problem**:
+```typescript
+// ❌ INCONSISTENT - Only Card has custom padding
+<Card className="bg-gradient">
+  <CardContent style={{ padding: '8px' }}>  // ✅ 8px padding
+    <div>Stats here</div>
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader>  // ❌ Still has default padding!
+    <CardTitle>Questions</CardTitle>
+  </CardHeader>
+  <CardContent>  // ❌ Still has default padding!
+    <div>Questions here</div>
+  </CardContent>
+</Card>
+```
+
+**Solution - Apply Padding Consistently**:
+```typescript
+// ✅ CONSISTENT - All Cards use same padding
+<Card className="bg-gradient">
+  <CardContent style={{ padding: '8px' }}>
+    <div>Stats here</div>
+  </CardContent>
+</Card>
+
+<Card>
+  <CardHeader style={{ padding: '8px' }}>  // ✅ Same 8px
+    <CardTitle>Questions</CardTitle>
+  </CardHeader>
+  <CardContent style={{ padding: '8px' }}>  // ✅ Same 8px
+    <div>Questions here</div>
+  </CardContent>
+</Card>
+```
+
+**Checklist When Adjusting Card Styling**:
+1. ✅ Search for ALL `<Card` usages in the file
+2. ✅ Check if `<CardHeader>`, `<CardContent>`, or `<CardFooter>` are used
+3. ✅ Apply the SAME padding value to ALL sub-components
+4. ✅ Use inline styles for precise control: `style={{ padding: '8px' }}`
+5. ✅ Test in browser with Inspect Element to verify
+
+**Quick Search Command**:
+```powershell
+# Find all Card usages in a file
+grep -n "Card" app/questions/page.tsx
+```
 
 ---
 

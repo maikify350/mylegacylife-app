@@ -127,7 +127,7 @@ export default function AnswerPage() {
 
     return (
         <div className="min-h-screen p-8">
-            <div className="max-w-4xl mx-auto space-y-8">
+            <div className="max-w-4xl mx-auto space-y-2">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <Link href="/">
@@ -141,21 +141,16 @@ export default function AnswerPage() {
                         size="lg"
                         onClick={handleSkip}
                         disabled={saving}
+                        style={{ paddingTop: '0', paddingBottom: '0' }}
                     >
                         Skip Question
                     </Button>
                 </div>
 
                 {/* Question Card */}
-                <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-accent">
-                    <CardHeader>
-                        <CardTitle className="text-3xl">Today's Question</CardTitle>
-                        <CardDescription className="text-xl">
-                            Take your time and speak from the heart
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl md:text-3xl font-serif leading-relaxed">
+                <Card className="bg-[#4A3728] border-2 border-accent shadow-lg">
+                    <CardContent style={{ paddingLeft: '8px', paddingRight: '8px' }}>
+                        <p className="text-2xl font-serif text-white">
                             {question.question_text}
                         </p>
                     </CardContent>
@@ -170,7 +165,7 @@ export default function AnswerPage() {
                 {/* Save Button */}
                 {transcript && (
                     <Card className="bg-gradient-to-br from-success/10 to-accent/10 border-2 border-success">
-                        <CardContent className="pt-6">
+                        <CardContent className="pt-6" style={{ paddingLeft: '8px', paddingRight: '8px' }}>
                             <div className="flex flex-col sm:flex-row gap-4 items-center">
                                 <div className="flex-1 text-center sm:text-left">
                                     <h3 className="text-2xl font-semibold mb-2">
@@ -189,7 +184,8 @@ export default function AnswerPage() {
                                         size="xl"
                                         onClick={handleSave}
                                         disabled={saving}
-                                        className="min-w-[200px]"
+                                        className="min-w-[200px] rounded-full bg-[#4A3728] hover:bg-[#5A4738] text-white shadow-lg animate-pulse-attention"
+                                        style={{ paddingTop: '8px', paddingBottom: '8px', marginRight: '10px' }}
                                     >
                                         {saving ? 'Saving...' : 'Save Story'}
                                     </Button>
@@ -201,11 +197,11 @@ export default function AnswerPage() {
 
                 {/* Tips */}
                 <Card>
-                    <CardHeader>
+                    <CardHeader style={{ paddingLeft: '8px', paddingRight: '8px' }}>
                         <CardTitle className="text-2xl">Tips for Great Stories</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex gap-3 items-start">
+                    <CardContent className="space-y-2" style={{ paddingLeft: '8px', paddingRight: '8px' }}>
+                        <div className="flex gap-3 items-start" style={{ marginBottom: '0' }}>
                             <span className="text-2xl">💭</span>
                             <div>
                                 <h4 className="text-xl font-semibold mb-1">Be Specific</h4>
@@ -215,7 +211,7 @@ export default function AnswerPage() {
                             </div>
                         </div>
 
-                        <div className="flex gap-3 items-start">
+                        <div className="flex gap-3 items-start" style={{ marginBottom: '0' }}>
                             <span className="text-2xl">❤️</span>
                             <div>
                                 <h4 className="text-xl font-semibold mb-1">Share Emotions</h4>
@@ -225,7 +221,7 @@ export default function AnswerPage() {
                             </div>
                         </div>
 
-                        <div className="flex gap-3 items-start">
+                        <div className="flex gap-3 items-start" style={{ marginBottom: '0' }}>
                             <span className="text-2xl">🎯</span>
                             <div>
                                 <h4 className="text-xl font-semibold mb-1">Don't Worry About Perfection</h4>

@@ -29,17 +29,20 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  // Accessibility
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5, // Allow zoom up to 500% for accessibility
-  },
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAF7F2" },
-    { media: "(prefers-color-scheme: dark)", color: "#1F2937" },
-  ],
 };
+
+// Separate viewport export (required by Next.js App Router)
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5, // Allow zoom up to 500% for accessibility
+};
+
+// Separate themeColor export (required by Next.js App Router)
+export const themeColor = [
+  { media: "(prefers-color-scheme: light)", color: "#FAF7F2" },
+  { media: "(prefers-color-scheme: dark)", color: "#1F2937" },
+];
 
 export default function RootLayout({
   children,
