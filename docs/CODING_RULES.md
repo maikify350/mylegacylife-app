@@ -1,8 +1,44 @@
 # MyLegacyLife.AI Coding Rules
 
+## Database Schema Standards
+
+### Rule 1: All Tables MUST Have Standard Columns
+**NON-NEGOTIABLE: Every table must include these columns:**
+
+✅ **REQUIRED COLUMNS:**
+```sql
+CREATE TABLE example_table (
+    -- PRIMARY KEY (REQUIRED)
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    
+    -- Your custom columns here
+    name TEXT NOT NULL,
+    description TEXT,
+    
+    -- AUDIT FIELDS (REQUIRED)
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    created_by UUID REFERENCES auth.users(id),
+    updated_by UUID REFERENCES auth.users(id)
+);
+```
+
+**Why?**
+- `id` - Unique identifier for every record (required for ordering, relationships, updates)
+- `created_at` - Track when record was created
+- `updated_at` - Track last modification time
+- `created_by` - Audit trail of who created the record
+- `updated_by` - Audit trail of who last modified the record
+
+**Exceptions:**
+- Junction tables (many-to-many) may use composite primary keys
+- System tables (auth.*, storage.*) managed by Supabase
+
+---
+
 ## UI/UX Standards
 
-### Rule 1: Never Use Native JavaScript Dialogs
+### Rule 2: Never Use Native JavaScript Dialogs
 **ALWAYS use shadcn/ui components for user feedback:**
 
 ❌ **NEVER USE:**
@@ -48,18 +84,18 @@ prompt('Enter value')
 - Cannot be styled to match our theme
 - Not accessible or mobile-friendly
 
-### Rule 2: Color Scheme
+### Rule 3: Color Scheme
 - **Primary Brown**: `#4A3728` (buttons, accents)
 - **Hover Brown**: `#5A4738`
 - **Always use these for primary actions**
 
-### Rule 3: Accessibility
+### Rule 4: Accessibility
 - All interactive elements must have `title` or `aria-label`
 - Proper heading hierarchy (h1 → h2 → h3)
 - Keyboard navigation support
 - Color contrast ratios must meet WCAG AA standards
 
-### Rule 4: Database Audit Fields (MANDATORY)
+### Rule 5: Database Audit Fields (MANDATORY)
 **Every database table MUST include these 4 audit fields:**
 
 ```sql
@@ -80,7 +116,7 @@ updated_by uuid null
 - Use `timestamptz` (timestamp with timezone), not `TIMESTAMP WITH TIME ZONE`
 - Use `uuid null` for user references (nullable since system can create records)
 
-### Rule 5: Responsive Design
+### Rule 6: Responsive Design
 - Mobile-first approach
 - Test on: Mobile (375px), Tablet (768px), Desktop (1440px)
 - Use Tailwind responsive prefixes: `sm:`, `md:`, `lg:`, `xl:`
