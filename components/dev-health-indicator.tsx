@@ -15,7 +15,7 @@ export function DevHealthIndicator() {
     const [position, setPosition] = useState({ x: 16, y: 16 }) // Default top-left
     const [isDragging, setIsDragging] = useState(false)
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
-    const [height, setHeight] = useState(400) // Default height
+    const [height, setHeight] = useState(280) // Default height - same as minimum
     const [isResizing, setIsResizing] = useState(false)
     const [resizeStartY, setResizeStartY] = useState(0)
     const [resizeStartHeight, setResizeStartHeight] = useState(0)
