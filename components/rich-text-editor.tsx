@@ -156,10 +156,11 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
                 className="hidden"
             />
 
+
             {/* Toolbar */}
-            <div className="flex items-center justify-between p-2 border-b-2 border-input bg-muted/30">
+            <div className="flex items-center justify-between p-1 border-b-2 border-input bg-muted/30">
                 {/* Left side - Clipboard & History */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                     {/* Cut */}
                     <Button
                         type="button"
@@ -240,7 +241,7 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
                 </div>
 
                 {/* Middle - Formatting */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                     <Button
                         type="button"
                         variant="ghost"
@@ -370,7 +371,7 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
                 </div>
 
                 {/* Right side - Insert Tools */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                     <Button
                         type="button"
                         variant="ghost"
