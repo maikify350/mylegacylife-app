@@ -157,9 +157,9 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <Button variant="outline" onClick={handleClose}>Cancel</Button>
-                            <AlertDialogAction onClick={handleStart} className="bg-[#4A3728] hover:bg-[#5A4738]">
+                            <Button onClick={handleStart} className="bg-[#4A3728] hover:bg-[#5A4738]">
                                 Start Contributing
-                            </AlertDialogAction>
+                            </Button>
                         </AlertDialogFooter>
                     </>
                 )}
