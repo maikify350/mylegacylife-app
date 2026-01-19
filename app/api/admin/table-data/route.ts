@@ -47,9 +47,40 @@ export async function POST(request: NextRequest) {
         }
 
         // Add pagination
-        query = query
-            .range(offset, offset + perPage - 1)
-            .order('id', { ascending: false })
+        query = query.range(offset, offset + perPage - 1)
+
+        // Determine which column to order by
+        if (search && search.trim()) {
+            // We already fetched a sample row for search, use those columns
+            const { data: sampleRow } = await supabase
+                .from(table)
+                .select('*')
+                .limit(1)
+
+            if (sampleRow && sampleRow.length > 0) {
+                const columns = Object.keys(sampleRow[0])
+                if (columns.includes('id')) {
+                    query = query.order('id', { ascending: false })
+                } else if (columns.includes('created_at')) {
+                    query = query.order('created_at', { ascending: false })
+                }
+            }
+        } else {
+            // No search, fetch sample to check columns
+            const { data: sampleRow } = await supabase
+                .from(table)
+                .select('*')
+                .limit(1)
+
+            if (sampleRow && sampleRow.length > 0) {
+                const columns = Object.keys(sampleRow[0])
+                if (columns.includes('id')) {
+                    query = query.order('id', { ascending: false })
+                } else if (columns.includes('created_at')) {
+                    query = query.order('created_at', { ascending: false })
+                }
+            }
+        }
 
         const { data, error, count } = await query
 
