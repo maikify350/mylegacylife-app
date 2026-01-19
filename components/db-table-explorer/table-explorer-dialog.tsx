@@ -155,7 +155,7 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                         </div>
 
                         {/* Summary Stats */}
-                        <div className="px-2 pb-1 space-y-1">
+                        <div className="px-2 pb-1 pt-2 space-y-1">
                             <div className="flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1">
@@ -173,16 +173,14 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                                         </>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={handleRefresh}
-                                        disabled={isLoading}
-                                        className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
-                                    >
-                                        {isLoading && <span className="animate-spin">⟳</span>}
-                                        {isLoading ? 'Refreshing...' : 'Refresh'}
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={handleRefresh}
+                                    disabled={isLoading}
+                                    className="px-3 py-0.5 text-xs bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                                >
+                                    {isLoading && <span className="animate-spin">⟳</span>}
+                                    {isLoading ? 'Refreshing...' : 'Refresh'}
+                                </button>
                             </div>
 
                             {error && (
@@ -198,16 +196,6 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                                 tables={data?.tables || []}
                                 isLoading={isLoading && !data}
                             />
-                        </div>
-
-                        {/* Footer */}
-                        <div className="px-2 py-1 border-t flex justify-end">
-                            <button
-                                onClick={onClose}
-                                className="px-3 py-1 text-xs bg-gray-200 hover:bg-gray-300 rounded transition-colors"
-                            >
-                                Close
-                            </button>
                         </div>
                     </div>
                 </>
