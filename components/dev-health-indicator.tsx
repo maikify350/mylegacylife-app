@@ -259,13 +259,15 @@ export function DevHealthIndicator() {
         <div
             ref={panelRef}
             onMouseDown={handleMouseDown}
-            className="fixed z-50 flex flex-col gap-1 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono select-none"
+            className="fixed z-50 flex flex-col gap-1 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono select-none overflow-y-auto"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
                 height: `${height}px`,
+                maxWidth: '400px',
+                minWidth: '280px',
                 cursor: isDragging ? 'grabbing' : 'grab',
-                position: 'relative'
+                position: 'fixed'
             }}
         >
             {/* DEV Mode Badge */}
