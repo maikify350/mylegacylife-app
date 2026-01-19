@@ -60,22 +60,23 @@ export function TableDetailView({ tableName, onBack }: TableDetailViewProps) {
         fetchData()
     }, [tableName, page, perPage, search])
 
-    // Debounced search
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (searchInput !== search) {
-                setSearch(searchInput)
-                setPage(1) // Reset to first page on new search
-            }
-        }, 300)
-
-        return () => clearTimeout(timer)
-    }, [searchInput])
+    // Remove debounced search - now using explicit button
+    const handleSearch = () => {
+        setSearch(searchInput)
+        setPage(1) // Reset to first page on new search
+    }
 
     const handleClearSearch = () => {
         setSearchInput('')
         setSearch('')
         setPage(1)
+    }
+
+    // Handle Enter key in search box
+    const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSearch()
+        }
     }
 
     const formatValue = (value: any): string => {
@@ -135,25 +136,35 @@ export function TableDetailView({ tableName, onBack }: TableDetailViewProps) {
                     <span className="text-xs text-gray-600">({total} records)</span>
                 </div>
 
-                {/* Search Bar */}
+                {/* Search Bar with Button */}
                 <div className="flex items-center gap-2">
                     <div className="flex-1 relative">
                         <input
                             type="text"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
-                            placeholder="Search all columns..."
+                            onKeyPress={handleSearchKeyPress}
+                            placeholder="Type to search all columns..."
                             className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:border-blue-500"
                         />
                         {searchInput && (
                             <button
                                 onClick={handleClearSearch}
                                 className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                title="Clear search"
                             >
                                 ×
                             </button>
                         )}
                     </div>
+                    <button
+                        onClick={handleSearch}
+                        disabled={isLoading}
+                        className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 text-xs font-medium flex items-center gap-1"
+                        title="Search"
+                    >
+                        🔍 Search
+                    </button>
                     {search && (
                         <span className="text-xs text-gray-600">
                             Found: {total}

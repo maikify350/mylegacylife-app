@@ -15,25 +15,48 @@ export async function POST(request: NextRequest) {
         }
 
         const supabase = await createClient()
-
-        // Calculate offset
         const offset = (page - 1) * perPage
 
-        // Build query
         let query = supabase
             .from(table)
             .select('*', { count: 'exact' })
 
-        // Add search if provided - use simple approach
-        // Note: This searches all text columns but may not work perfectly on all column types
-        // For now, skip search to get pagination working, then we can enhance it
-        // if (search && search.trim()) {
-        //     const searchTerm = `%${search.trim()}%`
-        //     // Skip search for now - will implement properly later
-        // }
+        // If search is provided, use RPC to get matching IDs, then filter by those IDs
+        if (search && search.trim()) {
+            // Use simplified RPC to get only matching IDs
+            const { data: matchingRows, error: searchError } = await supabase
+                .rpc('search_table_ids', {
+                    p_table_name: table,
+                    p_search_term: search.trim()
+                })
+
+            if (searchError) {
+                console.error('Search RPC error:', searchError)
+                return NextResponse.json({ error: searchError.message }, { status: 500 })
+            }
+
+            const matchingIds = matchingRows?.map((row: any) => row.id) || []
+
+            console.log('Search for:', search, 'Found IDs:', matchingIds.length)
+
+            if (matchingIds.length === 0) {
+                // No matches
+                return NextResponse.json({
+                    data: [],
+                    total: 0,
+                    filtered: 0,
+                    page,
+                    perPage,
+                    totalPages: 0,
+                    search
+                })
+            }
+
+            // Filter by matching IDs
+            query = query.in('id', matchingIds)
+        }
 
         // Add pagination and ordering
-        // Per CODING_RULES.md: All tables must have created_at
         query = query
             .range(offset, offset + perPage - 1)
             .order('created_at', { ascending: false })
@@ -41,26 +64,16 @@ export async function POST(request: NextRequest) {
         const { data, error, count } = await query
 
         if (error) {
-            console.error('Supabase query error:', {
-                message: error.message,
-                details: error.details,
-                hint: error.hint,
-                code: error.code,
-                table,
-                search,
-                page,
-                perPage
-            })
+            console.error('Supabase query error:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
         const totalPages = count ? Math.ceil(count / perPage) : 0
-        const filtered = count || 0
 
         return NextResponse.json({
             data: data || [],
             total: count || 0,
-            filtered,
+            filtered: count || 0,
             page,
             perPage,
             totalPages,
