@@ -152,6 +152,18 @@ export function DevHealthIndicator() {
         setErrorLog(prev => [...prev, { time, service, message }].slice(-20)) // Keep last 20 entries
     }
 
+    const fetchTableCount = async () => {
+        try {
+            const response = await fetch('/api/admin/tables')
+            if (response.ok) {
+                const data = await response.json()
+                setTableCount(data.totalRecords || 0)
+            }
+        } catch (error) {
+            // Silently fail
+        }
+    }
+
     const checkGitStatus = async () => {
         try {
             const response = await fetch('/api/dev-git', {
@@ -232,18 +244,13 @@ export function DevHealthIndicator() {
 
         checkHealth()
         checkGitStatus()
+        fetchTableCount() // Initial table count
         const interval = setInterval(checkHealth, 30000) // Check every 30 seconds
 
         // Real-time log refresh (tail -f behavior)
         const logRefreshInterval = setInterval(() => {
             setLogRefreshTrigger(prev => prev + 1)
             setLogCount(errorLog.length + logger.getLogs().length) // Update count
-
-            // Also update table count
-            fetch('/api/admin/tables')
-                .then(res => res.json())
-                .then(data => setTableCount(data.totalRecords || 0))
-                .catch(() => { }) // Silently fail
         }, 500) // Refresh logs every 500ms
 
         return () => {
@@ -285,6 +292,13 @@ export function DevHealthIndicator() {
             <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
                 <span className="font-bold">DEV MODE</span>
+                <button
+                    onClick={fetchTableCount}
+                    className="ml-1 text-gray-400 hover:text-white transition-colors"
+                    title="Refresh table counts"
+                >
+                    🔄
+                </button>
                 <span className="text-gray-400 ml-auto text-[10px]">F10: Toggle | F12: Log</span>
             </div>
 
@@ -399,7 +413,10 @@ export function DevHealthIndicator() {
 
             {/* Tables Explorer Button */}
             <button
-                onClick={() => setShowTables(true)}
+                onClick={() => {
+                    fetchTableCount() // Refresh count when opening
+                    setShowTables(true)
+                }}
                 className="w-full px-2 py-1 text-xs bg-indigo-600/20 hover:bg-indigo-600/30 rounded transition-colors"
             >
                 🗄️ Tables ({tableCount})
