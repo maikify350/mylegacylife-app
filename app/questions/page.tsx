@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
+export const dynamic = 'force-dynamic'
+
 export default async function QuestionsPage() {
     const supabase = await createClient()
 
@@ -51,19 +53,19 @@ export default async function QuestionsPage() {
 
                 {/* Stats Card */}
                 <Card className="bg-gradient-to-br from-primary/5 to-accent/5">
-                    <CardContent className="pt-6">
+                    <CardContent style={{ padding: '8px' }}>
                         <div className="grid md:grid-cols-3 gap-6 text-center">
-                            <div>
+                            <div style={{ lineHeight: 1 }}>
                                 <div className="text-4xl font-bold text-primary">{questionCount}</div>
-                                <div className="text-lg text-muted-foreground mt-2">Total Questions</div>
+                                <div className="text-lg text-muted-foreground">Total Questions</div>
                             </div>
-                            <div>
+                            <div style={{ lineHeight: 1 }}>
                                 <div className="text-4xl font-bold text-accent">52</div>
-                                <div className="text-lg text-muted-foreground mt-2">Weeks of Stories</div>
+                                <div className="text-lg text-muted-foreground">Weeks of Stories</div>
                             </div>
-                            <div>
+                            <div style={{ lineHeight: 1 }}>
                                 <div className="text-4xl font-bold text-success">1</div>
-                                <div className="text-lg text-muted-foreground mt-2">Beautiful Book</div>
+                                <div className="text-lg text-muted-foreground">Beautiful Book</div>
                             </div>
                         </div>
                     </CardContent>
@@ -85,17 +87,18 @@ export default async function QuestionsPage() {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="space-y-4">
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                     {categoryQuestions.map((question, index) => (
                                         <div
                                             key={question.id}
-                                            className="p-6 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border-2 border-transparent hover:border-accent"
+                                            className="rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors border-2 border-transparent hover:border-accent"
+                                            style={{ padding: '4px' }}
                                         >
                                             <div className="flex gap-4 items-start">
                                                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-lg font-bold">
                                                     {category.start + index + 1}
                                                 </div>
-                                                <p className="text-xl leading-relaxed flex-1">
+                                                <p className="text-xl flex-1" style={{ lineHeight: 1.2 }}>
                                                     {question.question_text}
                                                 </p>
                                             </div>
@@ -136,6 +139,15 @@ export default async function QuestionsPage() {
                         </Link>
                     </CardContent>
                 </Card>
+
+                {/* Footer Navigation */}
+                <div className="flex justify-center pt-8">
+                    <Link href="/">
+                        <Button variant="outline" size="xl" className="min-w-[250px]">
+                            ← Back to Home
+                        </Button>
+                    </Link>
+                </div>
             </div>
         </div>
     )
