@@ -120,7 +120,6 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                     {/* Backdrop */}
                     <div
                         className="fixed inset-0 bg-black/20 z-[9999]"
-                        onClick={onClose}
                     />
 
                     {/* Dialog */}
