@@ -19,6 +19,8 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
     const [questionText, setQuestionText] = useState('')
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState('')
+    const [showGrammarDialog, setShowGrammarDialog] = useState(false)
+    const [grammarResults, setGrammarResults] = useState<{ count: number; errors: string }>({ count: 0, errors: '' })
 
     const handleStart = () => {
         if (!email || !email.includes('@')) {
@@ -38,15 +40,20 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
         try {
             const matches = await checkGrammar(questionText)
             if (matches.length === 0) {
-                alert('✓ No grammar or spelling errors found!')
+                setGrammarResults({ count: 0, errors: '✓ No grammar or spelling errors found!' })
             } else {
                 const errors = matches.slice(0, 3).map((match, i) =>
                     `${i + 1}. ${match.message}\n   Suggestion: ${match.replacements[0]?.value || 'N/A'}`
                 ).join('\n\n')
-                alert(`Found ${matches.length} issue(s):\n\n${errors}`)
+                setGrammarResults({
+                    count: matches.length,
+                    errors: `${errors}${matches.length > 3 ? '\n\n...and more' : ''}`
+                })
             }
+            setShowGrammarDialog(true)
         } catch (err) {
-            alert('Error checking grammar. Please try again.')
+            setGrammarResults({ count: 0, errors: 'Error checking grammar. Please try again.' })
+            setShowGrammarDialog(true)
         }
     }
 
@@ -111,137 +118,158 @@ export function ContributeQuestionDialog({ open, onClose }: ContributeQuestionDi
     }
 
     return (
-        <AlertDialog open={open} onOpenChange={handleClose}>
-            <AlertDialogContent className="max-w-2xl">
-                {step === 'welcome' && (
-                    <>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle className="text-2xl">Thank You for Contributing! 🎁</AlertDialogTitle>
-                            <AlertDialogDescription className="text-base space-y-4 pt-4">
-                                <p>
-                                    Thank you for taking the moment to contribute questions! For your efforts, we will provide
-                                    you with credits in our software or gifts that we randomly select on a monthly basis.
-                                </p>
-                                <div className="bg-muted/50 p-4 rounded-lg">
-                                    <p className="font-semibold mb-2">Examples of rewards:</p>
-                                    <ul className="list-disc list-inside space-y-1 text-sm">
-                                        <li>Engraved coaster with your monogram</li>
-                                        <li>MyLegacyLife subscription credits</li>
-                                        <li>And more!</li>
-                                    </ul>
-                                </div>
-                                <div className="space-y-3 pt-2">
-                                    <div>
-                                        <label className="text-sm font-medium">Email (Required)</label>
-                                        <Input
-                                            type="email"
-                                            placeholder="your@email.com"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            className="mt-1"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="text-sm font-medium">Phone (Optional)</label>
-                                        <Input
-                                            type="tel"
-                                            placeholder="(555) 123-4567"
-                                            value={phone}
-                                            onChange={(e) => setPhone(e.target.value)}
-                                            className="mt-1"
-                                        />
-                                    </div>
-                                </div>
-                                {error && <p className="text-destructive text-sm">{error}</p>}
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <Button variant="outline" onClick={handleClose}>Cancel</Button>
-                            <Button onClick={handleStart} className="bg-[#4A3728] hover:bg-[#5A4738]">
-                                Start Contributing
-                            </Button>
-                        </AlertDialogFooter>
-                    </>
-                )}
-
-                {step === 'submit' && (
-                    <>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Submit a Question</AlertDialogTitle>
-                            <AlertDialogDescription className="space-y-4 pt-4">
-                                <div>
-                                    <Textarea
-                                        placeholder="Type your question here... (e.g., What was your favorite childhood memory?)"
-                                        value={questionText}
-                                        onChange={(e) => setQuestionText(e.target.value)}
-                                        className="min-h-[120px] text-base"
-                                        maxLength={500}
-                                    />
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        {questionText.length}/500 characters
+        <>
+            <AlertDialog open={open} onOpenChange={handleClose}>
+                <AlertDialogContent className="max-w-2xl">
+                    {step === 'welcome' && (
+                        <>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="text-2xl">Thank You for Contributing! 🎁</AlertDialogTitle>
+                                <AlertDialogDescription className="text-base space-y-4 pt-4">
+                                    <p>
+                                        Thank you for taking the moment to contribute questions! For your efforts, we will provide
+                                        you with credits in our software or gifts that we randomly select on a monthly basis.
                                     </p>
-                                </div>
+                                    <div className="bg-muted/50 p-4 rounded-lg">
+                                        <p className="font-semibold mb-2">Examples of rewards:</p>
+                                        <ul className="list-disc list-inside space-y-1 text-sm">
+                                            <li>Engraved coaster with your monogram</li>
+                                            <li>MyLegacyLife subscription credits</li>
+                                            <li>And more!</li>
+                                        </ul>
+                                    </div>
+                                    <div className="space-y-3 pt-2">
+                                        <div>
+                                            <label className="text-sm font-medium">Email (Required)</label>
+                                            <Input
+                                                type="email"
+                                                placeholder="your@email.com"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                className="mt-1"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-sm font-medium">Phone (Optional)</label>
+                                            <Input
+                                                type="tel"
+                                                placeholder="(555) 123-4567"
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                                className="mt-1"
+                                            />
+                                        </div>
+                                    </div>
+                                    {error && <p className="text-destructive text-sm">{error}</p>}
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <Button variant="outline" onClick={handleClose}>Cancel</Button>
+                                <Button onClick={handleStart} className="bg-[#4A3728] hover:bg-[#5A4738]">
+                                    Start Contributing
+                                </Button>
+                            </AlertDialogFooter>
+                        </>
+                    )}
+
+                    {step === 'submit' && (
+                        <>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Submit a Question</AlertDialogTitle>
+                                <AlertDialogDescription className="space-y-4 pt-4">
+                                    <div>
+                                        <Textarea
+                                            placeholder="Type your question here... (e.g., What was your favorite childhood memory?)"
+                                            value={questionText}
+                                            onChange={(e) => setQuestionText(e.target.value)}
+                                            className="min-h-[120px] text-base"
+                                            maxLength={500}
+                                        />
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            {questionText.length}/500 characters
+                                        </p>
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={handleProofread}
+                                        disabled={!questionText.trim()}
+                                    >
+                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        PROOFREAD
+                                    </Button>
+                                    {error && <p className="text-destructive text-sm">{error}</p>}
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter className="flex gap-2">
+                                <Button variant="outline" onClick={handleClose} disabled={submitting}>
+                                    Cancel
+                                </Button>
                                 <Button
                                     variant="outline"
-                                    size="sm"
-                                    onClick={handleProofread}
-                                    disabled={!questionText.trim()}
+                                    onClick={() => handleSubmit(true)}
+                                    disabled={submitting || !questionText.trim()}
                                 >
-                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    PROOFREAD
+                                    Submit & Add More
                                 </Button>
-                                {error && <p className="text-destructive text-sm">{error}</p>}
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter className="flex gap-2">
-                            <Button variant="outline" onClick={handleClose} disabled={submitting}>
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="outline"
-                                onClick={() => handleSubmit(true)}
-                                disabled={submitting || !questionText.trim()}
-                            >
-                                Submit & Add More
-                            </Button>
-                            <AlertDialogAction
-                                onClick={() => handleSubmit(false)}
-                                disabled={submitting || !questionText.trim()}
-                                className="bg-[#4A3728] hover:bg-[#5A4738]"
-                            >
-                                {submitting ? 'Submitting...' : 'Submit Question'}
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </>
-                )}
+                                <AlertDialogAction
+                                    onClick={() => handleSubmit(false)}
+                                    disabled={submitting || !questionText.trim()}
+                                    className="bg-[#4A3728] hover:bg-[#5A4738]"
+                                >
+                                    {submitting ? 'Submitting...' : 'Submit Question'}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </>
+                    )}
 
-                {step === 'success' && (
-                    <>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle className="text-2xl">Question Submitted! ✅</AlertDialogTitle>
-                            <AlertDialogDescription className="text-base space-y-4 pt-4">
-                                <p>
-                                    Your question will be evaluated for duplicates against our bank of questions and you'll be
-                                    notified via email to claim your reward.
-                                </p>
-                                <p className="font-semibold">
-                                    Thank you for contributing to MyLegacyLife.AI!
-                                </p>
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <Button variant="outline" onClick={handleAddMore}>
-                                Submit Another Question
-                            </Button>
-                            <AlertDialogAction onClick={handleClose} className="bg-[#4A3728] hover:bg-[#5A4738]">
-                                Close
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </>
-                )}
-            </AlertDialogContent>
-        </AlertDialog>
+                    {step === 'success' && (
+                        <>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className="text-2xl">Question Submitted! ✅</AlertDialogTitle>
+                                <AlertDialogDescription className="text-base space-y-4 pt-4">
+                                    <p>
+                                        Your question will be evaluated for duplicates against our bank of questions and you'll be
+                                        notified via email to claim your reward.
+                                    </p>
+                                    <p className="font-semibold">
+                                        Thank you for contributing to MyLegacyLife.AI!
+                                    </p>
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <Button variant="outline" onClick={handleAddMore}>
+                                    Submit Another Question
+                                </Button>
+                                <AlertDialogAction onClick={handleClose} className="bg-[#4A3728] hover:bg-[#5A4738]">
+                                    Close
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </>
+                    )}
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Grammar Check Results Dialog */}
+            <AlertDialog open={showGrammarDialog} onOpenChange={setShowGrammarDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {grammarResults.count === 0 ? 'Grammar Check' : `Found ${grammarResults.count} issue(s)`}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="whitespace-pre-wrap">
+                            {grammarResults.errors}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction className="bg-[#4A3728] hover:bg-[#5A4738]">
+                            OK
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
     )
 }
