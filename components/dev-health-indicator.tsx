@@ -6,6 +6,13 @@ import { createClient } from '@/lib/supabase/client'
 export function DevHealthIndicator() {
     const [supabaseStatus, setSupabaseStatus] = useState<'healthy' | 'error' | 'checking'>('checking')
     const [languageToolStatus, setLanguageToolStatus] = useState<'healthy' | 'error' | 'checking'>('checking')
+    const [errorLog, setErrorLog] = useState<Array<{ time: string; service: string; message: string }>>([])
+    const [showLog, setShowLog] = useState(false)
+
+    const addToLog = (service: string, message: string) => {
+        const time = new Date().toLocaleTimeString()
+        setErrorLog(prev => [...prev, { time, service, message }].slice(-20)) // Keep last 20 entries
+    }
 
     useEffect(() => {
         // Only show in development
@@ -16,9 +23,15 @@ export function DevHealthIndicator() {
             try {
                 const supabase = createClient()
                 const { error } = await supabase.from('questions').select('count').limit(1)
-                setSupabaseStatus(error ? 'error' : 'healthy')
-            } catch {
+                if (error) {
+                    setSupabaseStatus('error')
+                    addToLog('Supabase', error.message)
+                } else {
+                    setSupabaseStatus('healthy')
+                }
+            } catch (err) {
                 setSupabaseStatus('error')
+                addToLog('Supabase', err instanceof Error ? err.message : 'Connection failed')
             }
 
             // Check LanguageTool
@@ -28,9 +41,15 @@ export function DevHealthIndicator() {
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'text=test&language=en-US'
                 })
-                setLanguageToolStatus(response.ok ? 'healthy' : 'error')
-            } catch {
+                if (response.ok) {
+                    setLanguageToolStatus('healthy')
+                } else {
+                    setLanguageToolStatus('error')
+                    addToLog('Grammar API', `HTTP ${response.status}: ${response.statusText}`)
+                }
+            } catch (err) {
                 setLanguageToolStatus('error')
+                addToLog('Grammar API', err instanceof Error ? err.message : 'Connection failed')
             }
         }
 
@@ -97,6 +116,43 @@ export function DevHealthIndicator() {
                     <div className="h-px bg-white/30 my-0.5" />
                     <span className="text-red-400 font-bold animate-pulse text-center">⚠ API ERROR</span>
                 </>
+            )}
+
+            {/* Log Controls */}
+            <div className="h-px bg-white/30 my-0.5" />
+            <div className="flex gap-1">
+                <button
+                    onClick={() => setShowLog(!showLog)}
+                    className="flex-1 px-2 py-1 text-xs bg-white/10 hover:bg-white/20 rounded transition-colors"
+                >
+                    {showLog ? 'Hide Log' : 'View Log'} ({errorLog.length})
+                </button>
+                <button
+                    onClick={() => setErrorLog([])}
+                    className="px-2 py-1 text-xs bg-white/10 hover:bg-white/20 rounded transition-colors"
+                    disabled={errorLog.length === 0}
+                >
+                    Clear
+                </button>
+            </div>
+
+            {/* Error Log Display */}
+            {showLog && errorLog.length > 0 && (
+                <div className="mt-1 max-h-48 overflow-y-auto bg-black/50 rounded p-2 space-y-1">
+                    {errorLog.map((entry, i) => (
+                        <div key={i} className="text-xs border-l-2 border-red-500 pl-2">
+                            <div className="text-gray-400">{entry.time}</div>
+                            <div className="text-yellow-400 font-bold">{entry.service}</div>
+                            <div className="text-red-300">{entry.message}</div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {showLog && errorLog.length === 0 && (
+                <div className="mt-1 text-xs text-gray-400 text-center py-2">
+                    No errors logged
+                </div>
             )}
         </div>
     )
