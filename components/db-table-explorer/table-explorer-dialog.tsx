@@ -11,8 +11,12 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [position, setPosition] = useState({ x: 100, y: 100 }) // Default position
+    const [size, setSize] = useState({ width: 800, height: 600 }) // Default size
     const [isDragging, setIsDragging] = useState(false)
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+    const [isResizing, setIsResizing] = useState(false)
+    const [resizeDirection, setResizeDirection] = useState<'right' | 'bottom' | 'corner' | null>(null)
+    const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 })
     const dialogRef = useRef<HTMLDivElement>(null)
 
     const fetchTables = async () => {
@@ -44,23 +48,87 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
         }
     }
 
-    // Load position from localStorage on mount
+    // Load position and size from localStorage on mount
     useEffect(() => {
-        const saved = localStorage.getItem('tableExplorerPosition')
-        if (saved) {
+        const savedPos = localStorage.getItem('tableExplorerPosition')
+        const savedSize = localStorage.getItem('tableExplorerSize')
+
+        if (savedPos) {
             try {
-                const parsed = JSON.parse(saved)
-                setPosition(parsed)
+                setPosition(JSON.parse(savedPos))
             } catch (e) {
-                // Use default position
+                // Use default
+            }
+        }
+
+        if (savedSize) {
+            try {
+                setSize(JSON.parse(savedSize))
+            } catch (e) {
+                // Use default
             }
         }
     }, [])
 
-    // Save position to localStorage when it changes
+    // Save position and size to localStorage when they change
     useEffect(() => {
         localStorage.setItem('tableExplorerPosition', JSON.stringify(position))
     }, [position])
+
+    useEffect(() => {
+        localStorage.setItem('tableExplorerSize', JSON.stringify(size))
+    }, [size])
+
+    // Resize handlers
+    const handleResizeStart = (e: React.MouseEvent, direction: 'right' | 'bottom' | 'corner') => {
+        e.stopPropagation()
+        e.preventDefault()
+        setIsResizing(true)
+        setResizeDirection(direction)
+        setResizeStart({
+            x: e.clientX,
+            y: e.clientY,
+            width: size.width,
+            height: size.height
+        })
+    }
+
+    useEffect(() => {
+        const handleResizeMove = (e: MouseEvent) => {
+            if (!isResizing || !resizeDirection) return
+
+            const deltaX = e.clientX - resizeStart.x
+            const deltaY = e.clientY - resizeStart.y
+
+            let newWidth = size.width
+            let newHeight = size.height
+
+            if (resizeDirection === 'right' || resizeDirection === 'corner') {
+                newWidth = Math.max(350, Math.min(1200, resizeStart.width + deltaX))
+            }
+
+            if (resizeDirection === 'bottom' || resizeDirection === 'corner') {
+                newHeight = Math.max(400, Math.min(900, resizeStart.height + deltaY))
+            }
+
+            setSize({ width: newWidth, height: newHeight })
+        }
+
+        const handleResizeEnd = () => {
+            setIsResizing(false)
+            setResizeDirection(null)
+        }
+
+        if (isResizing) {
+            document.addEventListener('mousemove', handleResizeMove)
+            document.addEventListener('mouseup', handleResizeEnd)
+        }
+
+        return () => {
+            document.removeEventListener('mousemove', handleResizeMove)
+            document.removeEventListener('mouseup', handleResizeEnd)
+        }
+    }, [isResizing, resizeDirection, resizeStart, size])
 
     // Drag handlers
     const handleMouseDown = (e: React.MouseEvent) => {
@@ -130,8 +198,8 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                         style={{
                             left: `${position.x}px`,
                             top: `${position.y}px`,
-                            width: '800px',
-                            maxHeight: '90vh',
+                            width: `${size.width}px`,
+                            height: `${size.height}px`,
                             cursor: isDragging ? 'grabbing' : 'default'
                         }}
                     >
@@ -196,6 +264,27 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                                 isLoading={isLoading && !data}
                             />
                         </div>
+
+                        {/* Right Resize Handle */}
+                        <div
+                            onMouseDown={(e) => handleResizeStart(e, 'right')}
+                            className="absolute top-0 right-0 w-2 h-full cursor-ew-resize hover:bg-blue-200/50 transition-colors"
+                            style={{ cursor: isResizing && resizeDirection === 'right' ? 'ew-resize' : 'ew-resize' }}
+                        />
+
+                        {/* Bottom Resize Handle */}
+                        <div
+                            onMouseDown={(e) => handleResizeStart(e, 'bottom')}
+                            className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-blue-200/50 transition-colors"
+                            style={{ cursor: isResizing && resizeDirection === 'bottom' ? 'ns-resize' : 'ns-resize' }}
+                        />
+
+                        {/* Corner Resize Handle */}
+                        <div
+                            onMouseDown={(e) => handleResizeStart(e, 'corner')}
+                            className="absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize hover:bg-blue-400/50 transition-colors"
+                            style={{ cursor: isResizing && resizeDirection === 'corner' ? 'nwse-resize' : 'nwse-resize' }}
+                        />
                     </div>
                 </>
             )}
