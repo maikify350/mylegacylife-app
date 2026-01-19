@@ -66,6 +66,9 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
 
     // Drag handlers
     const handleMouseDown = (e: React.MouseEvent) => {
+        // Stop propagation to prevent dev panel from receiving the event
+        e.stopPropagation()
+
         // Only start drag if clicking on header area
         if ((e.target as HTMLElement).closest('[data-drag-handle]')) {
             setIsDragging(true)
@@ -157,20 +160,19 @@ export function TableExplorerDialog({ open, onClose }: TableExplorerDialogProps)
                         {/* Draggable Header */}
                         <div
                             data-drag-handle
-                            className="px-2 pt-2 pb-1 cursor-grab active:cursor-grabbing select-none bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t"
+                            className="px-2 py-1 cursor-grab active:cursor-grabbing select-none bg-blue-600 text-white rounded-t flex items-center justify-between"
+                            style={{ height: '30px' }}
                         >
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-xl font-semibold">
-                                    <span>🗄️</span>
-                                    <span>Database Table Explorer</span>
-                                </div>
-                                <button
-                                    onClick={onClose}
-                                    className="text-gray-500 hover:text-gray-700 text-xl leading-none"
-                                >
-                                    ×
-                                </button>
+                            <div className="flex items-center gap-2 text-sm font-semibold">
+                                <span>🗄️</span>
+                                <span>Database Table Explorer</span>
                             </div>
+                            <button
+                                onClick={onClose}
+                                className="text-white hover:text-gray-200 text-lg leading-none px-1"
+                            >
+                                ×
+                            </button>
                         </div>
 
                         {/* Summary Stats */}
