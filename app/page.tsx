@@ -3,12 +3,26 @@
 import Image from "next/image";
 import { useState } from "react";
 import { ContributeQuestionDialog } from "@/components/contribute-question-dialog";
+import { SettingsModal } from "@/components/settings-modal";
 
 export default function HomePage() {
   const [showContributeDialog, setShowContributeDialog] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8">
+      {/* Settings Button - Top Right */}
+      <button
+        onClick={() => setShowSettings(true)}
+        className="fixed top-4 right-4 p-3 bg-white border-2 border-gray-300 rounded-full hover:bg-gray-50 transition-colors shadow-lg z-40"
+        title="Settings"
+      >
+        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </button>
+
       {/* Hero Section */}
       <div className="max-w-4xl mx-auto">
         {/* Logo and Text Side by Side */}
@@ -213,6 +227,12 @@ export default function HomePage() {
       <ContributeQuestionDialog
         open={showContributeDialog}
         onClose={() => setShowContributeDialog(false)}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
       />
     </div>
   );
