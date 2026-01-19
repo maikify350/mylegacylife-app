@@ -1,96 +1,90 @@
 -- Community Question Contributions Table
 -- Stores user-contributed questions for review and approval
 
-CREATE TABLE contributed_questions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    
-    -- Contributor Information
-    contributor_email VARCHAR(255) NOT NULL,
-    contributor_phone VARCHAR(50),
-    subscriber_id UUID, -- Link to subscriber if they're logged in (optional, no FK for now)
-    
-    -- Question Data
-    question_text TEXT NOT NULL,
-    suggested_category VARCHAR(100),
-    assigned_category VARCHAR(100),
-    
-    -- Status Workflow: submitted → accepted/rejected
-    status VARCHAR(50) NOT NULL DEFAULT 'submitted' CHECK (status IN (
-        'submitted',
-        'accepted',
-        'rejected'
-    )),
-    
-    -- Rejection Tracking
-    rejection_reason VARCHAR(100) CHECK (rejection_reason IN (
-        'duplicate',
-        'inappropriate',
-        'unclear',
-        'too_specific',
-        'too_general',
-        'off_topic',
-        'other'
-    )),
-    duplicate_of_question_id UUID, -- Link to existing question (no FK for now)
-    similarity_score DECIMAL(3,2),
-    
-    -- Reward Tracking
-    reward_status VARCHAR(50) DEFAULT 'pending' CHECK (reward_status IN (
-        'pending',
-        'credited',
-        'notified',
-        'claimed',
-        'expired'
-    )),
-    reward_amount DECIMAL(10,2),
-    reward_claimed_at TIMESTAMP WITH TIME ZONE,
-    
-    -- Admin Review
-    reviewed_by UUID, -- Admin who reviewed (no FK for now)
-    reviewed_at TIMESTAMP WITH TIME ZONE,
-    admin_notes TEXT,
-    
-    -- Metadata
-    ip_address INET,
-    user_agent TEXT,
-    
-    -- Audit Fields
-    created_by UUID, -- Who created (no FK for now)
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_by UUID, -- Who updated (no FK for now)
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+create table if not exists public.contributed_questions (
+  id uuid primary key default gen_random_uuid(),
+  
+  -- Contributor Information
+  contributor_email varchar(255) not null,
+  contributor_phone varchar(50),
+  subscriber_id uuid, -- Link to subscriber if logged in (no FK for now)
+  
+  -- Question Data
+  question_text text not null,
+  suggested_category varchar(100),
+  assigned_category varchar(100),
+  
+  -- Status Workflow: submitted → accepted/rejected
+  status varchar(50) not null default 'submitted' check (status in (
+    'submitted',
+    'accepted',
+    'rejected'
+  )),
+  
+  -- Rejection Tracking
+  rejection_reason varchar(100) check (rejection_reason in (
+    'duplicate',
+    'inappropriate',
+    'unclear',
+    'too_specific',
+    'too_general',
+    'off_topic',
+    'other'
+  )),
+  duplicate_of_question_id uuid, -- Link to existing question (no FK for now)
+  similarity_score decimal(3,2),
+  
+  -- Reward Tracking
+  reward_status varchar(50) default 'pending' check (reward_status in (
+    'pending',
+    'credited',
+    'notified',
+    'claimed',
+    'expired'
+  )),
+  reward_amount decimal(10,2),
+  reward_claimed_at timestamptz,
+  
+  -- Admin Review
+  reviewed_by uuid, -- Admin who reviewed (no FK for now)
+  reviewed_at timestamptz,
+  admin_notes text,
+  
+  -- Metadata
+  ip_address inet,
+  user_agent text,
+  
+  -- Audit Fields (standard pattern)
+  created_at timestamptz not null default now(),
+  created_by uuid null,
+  updated_at timestamptz not null default now(),
+  updated_by uuid null
 );
 
 -- Indexes
-CREATE INDEX idx_contributed_questions_email ON contributed_questions(contributor_email);
-CREATE INDEX idx_contributed_questions_status ON contributed_questions(status) WHERE status = 'submitted';
-CREATE INDEX idx_contributed_questions_subscriber ON contributed_questions(subscriber_id) WHERE subscriber_id IS NOT NULL;
-CREATE INDEX idx_contributed_questions_created ON contributed_questions(created_at DESC);
-CREATE INDEX idx_contributed_questions_reward ON contributed_questions(reward_status) WHERE reward_status IN ('pending', 'notified');
-
--- Trigger for updated_at
-CREATE TRIGGER update_contributed_questions_updated_at
-    BEFORE UPDATE ON contributed_questions
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+create index if not exists idx_contributed_questions_email on public.contributed_questions(contributor_email);
+create index if not exists idx_contributed_questions_status on public.contributed_questions(status) where status = 'submitted';
+create index if not exists idx_contributed_questions_subscriber on public.contributed_questions(subscriber_id) where subscriber_id is not null;
+create index if not exists idx_contributed_questions_created on public.contributed_questions(created_at desc);
+create index if not exists idx_contributed_questions_reward on public.contributed_questions(reward_status) where reward_status in ('pending', 'notified');
 
 -- Row Level Security
-ALTER TABLE contributed_questions ENABLE ROW LEVEL SECURITY;
+alter table public.contributed_questions enable row level security;
 
 -- Anyone can insert (public contribution)
-CREATE POLICY "Anyone can contribute questions"
-    ON contributed_questions
-    FOR INSERT
-    WITH CHECK (true);
+create policy "Anyone can contribute questions"
+  on public.contributed_questions
+  for insert
+  with check (true);
 
 -- Anyone can view (for now - will restrict later when subscribers table exists)
-CREATE POLICY "Anyone can view questions"
-    ON contributed_questions
-    FOR SELECT
-    USING (true);
+create policy "Anyone can view questions"
+  on public.contributed_questions
+  for select
+  using (true);
 
 -- Only authenticated users can update/delete (simplified for now)
-CREATE POLICY "Authenticated users can manage questions"
-    ON contributed_questions
-    FOR ALL
-    USING (auth.uid() IS NOT NULL);
+create policy "Authenticated users can manage questions"
+  on public.contributed_questions
+  for all
+  using (auth.uid() is not null);
