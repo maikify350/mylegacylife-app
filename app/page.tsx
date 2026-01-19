@@ -1,4 +1,4 @@
-import { Logo } from "@/components/logo";
+import Image from "next/image";
 
 export default function HomePage() {
   return (
@@ -7,7 +7,13 @@ export default function HomePage() {
       <div className="max-w-4xl mx-auto text-center space-y-8">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <Logo className="w-48 h-48" />
+          <Image
+            src="/logo_mocha.png"
+            alt="MyLegacyLife.AI Logo"
+            width={192}
+            height={192}
+            priority
+          />
         </div>
 
         {/* Heading */}
