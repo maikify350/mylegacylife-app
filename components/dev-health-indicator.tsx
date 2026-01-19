@@ -15,6 +15,10 @@ export function DevHealthIndicator() {
     const [position, setPosition] = useState({ x: 16, y: 16 }) // Default top-left
     const [isDragging, setIsDragging] = useState(false)
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+    const [height, setHeight] = useState(400) // Default height
+    const [isResizing, setIsResizing] = useState(false)
+    const [resizeStartY, setResizeStartY] = useState(0)
+    const [resizeStartHeight, setResizeStartHeight] = useState(0)
     const panelRef = useRef<HTMLDivElement>(null)
     const logEndRef = useRef<HTMLDivElement>(null)
     const [logRefreshTrigger, setLogRefreshTrigger] = useState(0)
@@ -23,12 +27,16 @@ export function DevHealthIndicator() {
     useEffect(() => {
         const savedPosition = localStorage.getItem('dev-health-position')
         const savedVisibility = localStorage.getItem('dev-health-visible')
+        const savedHeight = localStorage.getItem('dev-health-height')
 
         if (savedPosition) {
             setPosition(JSON.parse(savedPosition))
         }
         if (savedVisibility !== null) {
             setIsVisible(savedVisibility === 'true')
+        }
+        if (savedHeight) {
+            setHeight(parseInt(savedHeight))
         }
     }, [])
 
@@ -41,6 +49,11 @@ export function DevHealthIndicator() {
     useEffect(() => {
         localStorage.setItem('dev-health-visible', String(isVisible))
     }, [isVisible])
+
+    // Save height to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('dev-health-height', String(height))
+    }, [height])
 
     // F10 hotkey toggle panel, F12 hotkey toggle log
     useEffect(() => {
@@ -97,6 +110,38 @@ export function DevHealthIndicator() {
             window.removeEventListener('mouseup', handleMouseUp)
         }
     }, [isDragging, dragOffset])
+
+    // Resize handlers
+    const handleResizeStart = (e: React.MouseEvent) => {
+        e.stopPropagation() // Prevent drag
+        setIsResizing(true)
+        setResizeStartY(e.clientY)
+        setResizeStartHeight(height)
+    }
+
+    useEffect(() => {
+        const handleResizeMove = (e: MouseEvent) => {
+            if (!isResizing) return
+
+            const deltaY = e.clientY - resizeStartY
+            const newHeight = Math.max(200, Math.min(800, resizeStartHeight + deltaY))
+            setHeight(newHeight)
+        }
+
+        const handleResizeEnd = () => {
+            setIsResizing(false)
+        }
+
+        if (isResizing) {
+            window.addEventListener('mousemove', handleResizeMove)
+            window.addEventListener('mouseup', handleResizeEnd)
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleResizeMove)
+            window.removeEventListener('mouseup', handleResizeEnd)
+        }
+    }, [isResizing, resizeStartY, resizeStartHeight])
 
     const addToLog = (service: string, message: string) => {
         const time = new Date().toLocaleTimeString()
@@ -218,7 +263,9 @@ export function DevHealthIndicator() {
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
-                cursor: isDragging ? 'grabbing' : 'grab'
+                height: `${height}px`,
+                cursor: isDragging ? 'grabbing' : 'grab',
+                position: 'relative'
             }}
         >
             {/* DEV Mode Badge */}
@@ -383,6 +430,14 @@ export function DevHealthIndicator() {
                     </div>
                 )
             })()}
+
+            {/* Resize Handle */}
+            <div
+                onMouseDown={handleResizeStart}
+                className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-white/20 transition-colors"
+                style={{ cursor: isResizing ? 'ns-resize' : 'ns-resize' }}
+                title="Drag to resize"
+            />
         </div>
     )
 }
