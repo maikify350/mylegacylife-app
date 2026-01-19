@@ -124,7 +124,7 @@ export function DevHealthIndicator() {
             if (!isResizing) return
 
             const deltaY = e.clientY - resizeStartY
-            const newHeight = Math.max(350, Math.min(800, resizeStartHeight + deltaY)) // Min 350px to show all buttons
+            const newHeight = Math.max(280, Math.min(800, resizeStartHeight + deltaY)) // Min 280px - just enough for buttons
             setHeight(newHeight)
         }
 
@@ -333,9 +333,12 @@ export function DevHealthIndicator() {
                     {showLog ? 'Hide Log' : 'View Log'} ({errorLog.length + logger.getLogs().length})
                 </button>
                 <button
-                    onClick={() => setErrorLog([])}
+                    onClick={() => {
+                        setErrorLog([])
+                        logger.clearLogs()
+                    }}
                     className="px-2 py-1 text-xs bg-white/10 hover:bg-white/20 rounded transition-colors"
-                    disabled={errorLog.length === 0}
+                    disabled={errorLog.length === 0 && logger.getLogs().length === 0}
                 >
                     Clear
                 </button>
