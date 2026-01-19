@@ -347,17 +347,22 @@ export function DevHealthIndicator() {
             {/* Test Log Generator */}
             <button
                 onClick={() => {
-                    // Generate 10 test log entries with delay
+                    // Generate mix of concise and verbose test logs
                     let count = 0
                     const interval = setInterval(() => {
                         count++
-                        logger.info('Test', `Test log entry #${count}`, { timestamp: Date.now() })
+                        // CONCISE logs (always visible)
+                        logger.notice('Test', `Test iteration #${count}`)
+                        logger.route(`/test/page/${count}`, 'GET')
+
+                        // VERBOSE logs (only in verbose mode)
+                        logger.info('Test', `Verbose info entry #${count}`, { timestamp: Date.now() })
                         logger.crud('CREATE', 'test_table', { id: count })
                         logger.api('/api/test', 'POST', 200)
 
                         if (count >= 10) {
                             clearInterval(interval)
-                            logger.notice('Test', 'Test log generation complete')
+                            logger.warning('Test', 'Test log generation complete - 10 iterations done')
                         }
                     }, 300) // 300ms between entries
                 }}
