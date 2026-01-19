@@ -259,7 +259,7 @@ export function DevHealthIndicator() {
         <div
             ref={panelRef}
             onMouseDown={handleMouseDown}
-            className="fixed z-50 flex flex-col gap-1 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono select-none overflow-y-auto"
+            className="fixed z-50 flex flex-col gap-1 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono select-none"
             style={{
                 left: `${position.x}px`,
                 top: `${position.y}px`,
@@ -393,7 +393,7 @@ export function DevHealthIndicator() {
                 ].sort((a, b) => a.time.localeCompare(b.time)).slice(-50) // Last 50 entries
 
                 return combinedLogs.length > 0 ? (
-                    <div className="mt-1 max-h-64 overflow-y-auto bg-black/50 rounded p-2 space-y-1">
+                    <div className="flex-1 overflow-y-auto bg-black/50 rounded p-2 space-y-1 min-h-0">
                         <div className="flex justify-between items-center mb-1 sticky top-0 bg-black/80 pb-1">
                             <span className="text-[10px] text-gray-400">
                                 Mode: {logger.getMode().toUpperCase()} | {combinedLogs.length} entries
