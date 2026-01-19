@@ -34,10 +34,12 @@ export async function POST(request: NextRequest) {
 
             if (columns && columns.length > 0) {
                 const columnNames = Object.keys(columns[0])
+                const searchTerm = search.trim()
 
-                // Build OR conditions for text search across all columns
+                // Build OR conditions for text search
+                // Cast all columns to text for searching
                 const searchConditions = columnNames
-                    .map(col => `${col}.ilike.%${search}%`)
+                    .map(col => `${col}::text.ilike.%${searchTerm}%`)
                     .join(',')
 
                 query = query.or(searchConditions)
