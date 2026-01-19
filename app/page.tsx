@@ -1,6 +1,12 @@
+"use client"
+
 import Image from "next/image";
+import { useState } from "react";
+import { ContributeQuestionDialog } from "@/components/contribute-question-dialog";
 
 export default function HomePage() {
+  const [showContributeDialog, setShowContributeDialog] = useState(false);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8">
       {/* Hero Section */}
@@ -182,12 +188,32 @@ export default function HomePage() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-2 pt-8 border-t-2 border-border text-center">
+        <footer className="mt-2 pt-8 border-t-2 border-border text-center space-y-4">
+          {/* Contribute Questions Button */}
+          <button
+            onClick={() => setShowContributeDialog(true)}
+            className="inline-flex items-center gap-2 px-6 py-3 text-lg font-medium text-white bg-gradient-to-r from-[#4A3728] to-[#5A4738] rounded-lg hover:from-[#5A4738] hover:to-[#6A4848] transition-all shadow-lg hover:shadow-xl"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+            </svg>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Contribute Questions for Rewards</span>
+          </button>
+
           <p className="text-lg text-muted-foreground">
             © 2026 MyLegacyLife.AI. Preserving memories for future generations.
           </p>
         </footer>
       </div>
+
+      {/* Contribute Question Dialog */}
+      <ContributeQuestionDialog
+        open={showContributeDialog}
+        onClose={() => setShowContributeDialog(false)}
+      />
     </div>
   );
 }
