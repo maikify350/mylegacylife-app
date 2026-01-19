@@ -7,6 +7,7 @@ import Image from '@tiptap/extension-image'
 import { Button } from '@/components/ui/button'
 import { useEffect, useRef, useState } from 'react'
 import { ImageEditorDialog } from './image-editor-dialog'
+import { checkGrammar } from '@/lib/languagetool'
 
 interface RichTextEditorProps {
     content: string
@@ -83,6 +84,32 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
         setSelectedImage('')
     }
 
+    const handleProofread = async () => {
+        if (!editor) return
+
+        const text = editor.getText()
+        if (!text.trim()) {
+            alert('Please write some text first!')
+            return
+        }
+
+        try {
+            const matches = await checkGrammar(text)
+
+            if (matches.length === 0) {
+                alert('✓ No grammar or spelling errors found!')
+            } else {
+                const errors = matches.slice(0, 5).map((match, i) =>
+                    `${i + 1}. ${match.message}\n   Suggestion: ${match.replacements[0]?.value || 'N/A'}`
+                ).join('\n\n')
+
+                alert(`Found ${matches.length} issue(s):\n\n${errors}${matches.length > 5 ? '\n\n...and more' : ''}`)
+            }
+        } catch (error) {
+            alert('Error checking grammar. Please try again.')
+        }
+    }
+
     if (!editor) {
         return null
     }
@@ -111,6 +138,19 @@ export function RichTextEditor({ content, onUpdate, placeholder }: RichTextEdito
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <span className="ml-1">PHOTO</span>
+                </Button>
+
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleProofread}
+                    title="Check Grammar & Spelling"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="ml-1">PROOFREAD</span>
                 </Button>
 
                 <div className="w-px h-6 bg-border mx-1" />
