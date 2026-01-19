@@ -46,17 +46,17 @@ export function DevHealthIndicator() {
     const hasError = supabaseStatus === 'error' || languageToolStatus === 'error'
 
     return (
-        <div className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono">
+        <div className="fixed top-4 left-4 z-50 flex flex-col gap-1 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono">
             {/* DEV Mode Badge */}
             <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
-                <span className="font-bold">DEV</span>
+                <span className="font-bold">DEV MODE</span>
             </div>
 
-            <div className="w-px h-4 bg-white/30" />
+            <div className="h-px bg-white/30 my-0.5" />
 
             {/* Supabase Status */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
                 {supabaseStatus === 'checking' && (
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" />
                 )}
@@ -74,7 +74,7 @@ export function DevHealthIndicator() {
             </div>
 
             {/* LanguageTool Status */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
                 {languageToolStatus === 'checking' && (
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" />
                 )}
@@ -87,15 +87,15 @@ export function DevHealthIndicator() {
                     </svg>
                 )}
                 <span className={languageToolStatus === 'error' ? 'text-red-400 font-bold' : ''}>
-                    Grammar
+                    Grammar API
                 </span>
             </div>
 
             {/* Error Alert */}
             {hasError && (
                 <>
-                    <div className="w-px h-4 bg-white/30" />
-                    <span className="text-red-400 font-bold animate-pulse">⚠ API ERROR</span>
+                    <div className="h-px bg-white/30 my-0.5" />
+                    <span className="text-red-400 font-bold animate-pulse text-center">⚠ API ERROR</span>
                 </>
             )}
         </div>
