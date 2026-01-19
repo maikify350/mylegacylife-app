@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export function DevHealthIndicator() {
@@ -10,6 +10,86 @@ export function DevHealthIndicator() {
     const [showLog, setShowLog] = useState(false)
     const [gitStatus, setGitStatus] = useState<string>('')
     const [committing, setCommitting] = useState(false)
+    const [isVisible, setIsVisible] = useState(true)
+    const [position, setPosition] = useState({ x: 16, y: 16 }) // Default top-left
+    const [isDragging, setIsDragging] = useState(false)
+    const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+    const panelRef = useRef<HTMLDivElement>(null)
+
+    // Load position from localStorage on mount
+    useEffect(() => {
+        const savedPosition = localStorage.getItem('dev-health-position')
+        const savedVisibility = localStorage.getItem('dev-health-visible')
+
+        if (savedPosition) {
+            setPosition(JSON.parse(savedPosition))
+        }
+        if (savedVisibility !== null) {
+            setIsVisible(savedVisibility === 'true')
+        }
+    }, [])
+
+    // Save position to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('dev-health-position', JSON.stringify(position))
+    }, [position])
+
+    // Save visibility to localStorage when it changes
+    useEffect(() => {
+        localStorage.setItem('dev-health-visible', String(isVisible))
+    }, [isVisible])
+
+    // F10 hotkey toggle
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'F10') {
+                e.preventDefault()
+                setIsVisible(prev => !prev)
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown)
+        return () => window.removeEventListener('keydown', handleKeyDown)
+    }, [])
+
+    // Drag handlers
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if ((e.target as HTMLElement).tagName === 'BUTTON') return // Don't drag when clicking buttons
+
+        setIsDragging(true)
+        const rect = panelRef.current?.getBoundingClientRect()
+        if (rect) {
+            setDragOffset({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            })
+        }
+    }
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!isDragging) return
+
+            setPosition({
+                x: e.clientX - dragOffset.x,
+                y: e.clientY - dragOffset.y
+            })
+        }
+
+        const handleMouseUp = () => {
+            setIsDragging(false)
+        }
+
+        if (isDragging) {
+            window.addEventListener('mousemove', handleMouseMove)
+            window.addEventListener('mouseup', handleMouseUp)
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove)
+            window.removeEventListener('mouseup', handleMouseUp)
+        }
+    }, [isDragging, dragOffset])
 
     const addToLog = (service: string, message: string) => {
         const time = new Date().toLocaleTimeString()
@@ -106,12 +186,24 @@ export function DevHealthIndicator() {
 
     const hasError = supabaseStatus === 'error' || languageToolStatus === 'error'
 
+    if (!isVisible) return null
+
     return (
-        <div className="fixed top-4 left-4 z-50 flex flex-col gap-1 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono">
+        <div
+            ref={panelRef}
+            onMouseDown={handleMouseDown}
+            className="fixed z-50 flex flex-col gap-1 bg-black/90 text-white px-3 py-2 rounded-lg shadow-lg text-xs font-mono select-none"
+            style={{
+                left: `${position.x}px`,
+                top: `${position.y}px`,
+                cursor: isDragging ? 'grabbing' : 'grab'
+            }}
+        >
             {/* DEV Mode Badge */}
             <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
                 <span className="font-bold">DEV MODE</span>
+                <span className="text-gray-400 ml-auto text-[10px]">(F10 to toggle)</span>
             </div>
 
             <div className="h-px bg-white/30 my-0.5" />
