@@ -243,6 +243,12 @@ export default function AnswerPage() {
             <AlertDialog open={showSkipDialog} onOpenChange={setShowSkipDialog}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
+                        {/* Show the actual question in quotes and italics */}
+                        {question && (
+                            <p className="text-lg italic text-muted-foreground mb-4 border-l-4 border-accent pl-4">
+                                "{question.question_text}"
+                            </p>
+                        )}
                         <AlertDialogTitle>Skip this question?</AlertDialogTitle>
                         <AlertDialogDescription>
                             You'll get a new random question. You can always come back to this one later.
